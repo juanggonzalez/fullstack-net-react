@@ -20,6 +20,7 @@
 [Aa]pp_Data/
 [Ee]rros.log
 [Dd]iagnostics/
+*.vsidx
 # User-specific files
 *.user
 *.tlog
