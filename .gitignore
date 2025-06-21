@@ -1,0 +1,103 @@
+# Visual Studio Code
+.vscode/
+
+# Visual Studio / .NET
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.suo
+*.user
+*.pdb
+*.log
+*.vspscc
+*.vssscc
+*.buildscc
+*.bak
+*.cache
+*.scc
+*.[Pp]ublish/
+[Aa]pp_Data/
+[Ee]rros.log
+[Dd]iagnostics/
+# User-specific files
+*.user
+*.tlog
+*.lastbuildstate
+*.VC.opendb
+*.VC.db
+
+# Rider (JetBrains IDE)
+.idea/
+.Rider/
+
+# NuGet
+*.nupkg
+*.snupkg
+*.cache
+packages/
+# Exclude the NuGet user-wide global packages folder
+# See https://docs.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders
+# %USERPROFILE%\.nuget\packages\
+# ~/.nuget/packages/
+
+# Azure Cloud Services
+csx
+*.build.log
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+
+# Compiled files
+*.exe
+*.dll
+*.com
+*.lib
+*.out
+*.ipch
+*.obj
+*.o
+*.exp
+
+# Database files
+*.mdf
+*.ldf
+*.sdf
+*.sqlite
+*.db
+
+# Node.js / React (frontend typically in a subfolder like 'client-app' or 'frontend')
+node_modules/
+build/
+dist/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.parcel-cache/
+.eslintcache
+coverage/
+storybook-static/
+*.snap # Jest snapshots
+
+# macOS (if you're on a Mac)
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbs.db (Windows thumbnails)
+Thumbs.db
+
+# General temporary and configuration files
+*.swp
+*.bak
+*~
+*.orig
+*.pyc
+*.iml # IntelliJ IDEA project files (if also using Java for some reason)
