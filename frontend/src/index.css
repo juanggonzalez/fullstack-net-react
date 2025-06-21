@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  background-color: #f4f7f6; /* Coincide con el background.default de tu tema MUI */
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
