@@ -1,6 +1,5 @@
 ﻿using EcommerceApi.Dtos;
 using EcommerceApi.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceApi.Controllers
@@ -56,7 +55,7 @@ namespace EcommerceApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")] 
         public async Task<ActionResult<ProductDto>> CreateProduct(ProductCreateDto productDto)
         {
             var createdProduct = await _productService.CreateProductAsync(productDto);
@@ -64,7 +63,7 @@ namespace EcommerceApi.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(int id, ProductUpdateDto productDto)
         {
             if (id != productDto.Id)
@@ -82,7 +81,7 @@ namespace EcommerceApi.Controllers
         }
 
         [HttpPatch("{id}/stock")]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin, WarehouseManager")]
         public async Task<IActionResult> UpdateProductStock(int id, ProductStockUpdateDto stockDto)
         {
             if (id != stockDto.Id)
@@ -101,7 +100,7 @@ namespace EcommerceApi.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var success = await _productService.DeleteProductAsync(id);
