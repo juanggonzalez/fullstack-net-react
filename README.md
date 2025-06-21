@@ -1,6 +1,3 @@
-Claro, aquí tienes el contenido completo del `README.md` que puedes copiar y pegar directamente en tu archivo `README.md` en la raíz de tu repositorio:
-
-````markdown
 # 🧩 Full Stack App: .NET + React
 
 Aplicación full stack de comercio electrónico con un robusto backend en **ASP.NET Core** y un moderno frontend en **React**.
@@ -33,126 +30,108 @@ Aplicación full stack de comercio electrónico con un robusto backend en **ASP.
     * Productos
     * Categorías
     * Marcas
-    * Direcciones de Usuario
-    * Carrito de Compras (con ítems)
-    * Pedidos (con ítems)
-* **Documentación de API**: Interfaz interactiva con Swagger UI.
-* **Seeding Inicial de Datos**: Roles predefinidos ("Admin", "User"), usuario administrador y datos de ejemplo para categorías, marcas y productos.
-* **Filtrado y Paginación de Productos**.
-* **Actualización de Stock de Productos**.
-* **CORS** configurado para permitir comunicación entre frontend y backend.
+    * Direcciones de usuarios
+    * Carritos de compra y sus ítems
+    * Pedidos y sus ítems
+* **Paginación, búsqueda, filtrado y ordenación**: Para productos, mejorando la experiencia de usuario.
+* **Manejo de errores centralizado**: Respuestas de API consistentes.
+* **Validación de modelos**: Asegurando la integridad de los datos.
 
-## 🚀 Cómo Iniciar la Aplicación
+## 🚀 Cómo Empezar (Setup Local)
 
-Sigue estos pasos para poner en marcha tanto el backend como el frontend.
+Sigue estos pasos para poner en marcha el proyecto en tu máquina local.
 
-### 📋 Prerrequisitos
+### 1. Requisitos Previos
 
 Asegúrate de tener instalado lo siguiente:
 
-* **.NET SDK** (Versión 8.0 o superior, compatible con tu proyecto)
-* **Node.js** (LTS recomendado) y **npm** (o Yarn)
-* **SQL Server LocalDB** (generalmente viene con Visual Studio)
-* **Visual Studio 2022** (recomendado para desarrollo backend) o **Visual Studio Code**
-* **Editor de código** (VS Code, WebStorm, etc.) para el frontend
+* **.NET SDK 8** (o la versión que uses para el backend)
+* **Node.js** (LTS recomendado) y **npm** o **Yarn**
+* **SQL Server LocalDB** (generalmente viene con Visual Studio) o una instancia de SQL Server.
+* **Visual Studio 2022** (recomendado para el backend) o VS Code.
 
-### ⚙️ Configuración del Backend
+### 2. Configuración del Backend (.NET API)
 
-1.  **Navega al directorio del backend:**
-    Abre tu terminal (o la Consola del Administrador de Paquetes en Visual Studio) y navega a la carpeta de tu proyecto backend. Asumiendo la estructura:
+1.  **Navega a la carpeta del backend:**
     ```bash
-    cd D:\Repositories\fullstack-net-react\backend\fullstack-net-react\fullstack-net-react
+    cd backend/
     ```
-    (Asegúrate de que esta es la carpeta que contiene el archivo `fullstack-net-react.csproj`).
+2.  **Abre la solución en Visual Studio:**
+    Abre el archivo `fullstack-net-react.sln` con Visual Studio.
 
-2.  **Restaura las dependencias de NuGet:**
-    ```bash
-    dotnet restore
-    ```
-
-3.  **Configura la Base de Datos y las Migraciones:**
-    Es crucial que tu base de datos esté en un estado limpio para aplicar las migraciones de Identity.
-
-    * **Instala las herramientas de EF Core (si no lo has hecho):**
-        Si aún no puedes ejecutar comandos `dotnet ef` o los cmdlets de la Consola de NuGet, instala las herramientas globales:
-        ```bash
-        dotnet tool install --global dotnet-ef --version 8.0.0
+3.  **Configura la cadena de conexión a la base de datos:**
+    * Abre el archivo `appsettings.json` (y `appsettings.Development.json`) en tu proyecto de backend.
+    * Asegúrate de que la sección `ConnectionStrings` apunte a tu instancia de SQL Server LocalDB (o la que uses). Por ejemplo:
+        ```json
+        "ConnectionStrings": {
+          "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=EcommerceDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+        }
         ```
-        Y para la Consola del Administrador de Paquetes (dentro de Visual Studio), asegúrate de que el paquete esté instalado en tu proyecto `fullstack-net-react`:
+        `EcommerceDb` es el nombre de la base de datos que se creará.
+
+4.  **Aplica Migraciones de Entity Framework Core:**
+    * Abre la **Consola del Administrador de Paquetes (Package Manager Console)** en Visual Studio (View > Other Windows > Package Manager Console).
+    * Asegúrate de que el "Default project" sea `fullstack-net-react`.
+    * Ejecuta los siguientes comandos para crear la base de datos y las tablas:
         ```powershell
-        # En la Consola del Administrador de Paquetes
-        Install-Package Microsoft.EntityFrameworkCore.Tools -Version 8.0.0
+        Update-Database
+        ```
+    * Si es la primera vez que creas migraciones, deberías hacer:
+        ```powershell
+        Add-Migration InitialCreate
+        Update-Database
         ```
 
-    * **Elimina la base de datos existente (si la tienes y quieres un inicio limpio):**
-        La forma más segura es eliminarla manualmente a través del **Explorador de Objetos de SQL Server** en Visual Studio.
-        1.  Ve a **View** > **SQL Server Object Explorer**.
-        2.  Expande `(localdb)\MSSQLLocalDB` > **Databases**.
-        3.  Haz clic derecho en `EcommerceDb` y selecciona **Delete**. Marca "Close existing connections" y confirma.
-        * *(Opcional: Si lo haces desde la Consola del Administrador de Paquetes y `Remove-Database` funciona para ti ahora: `Remove-Database -Force`)*
+5.  **Ejecuta el Backend:**
+    * Desde Visual Studio, presiona `F5` o el botón "IIS Express" para iniciar la API.
+    * La API se ejecutará en `https://localhost:7224` (por defecto). La documentación de Swagger UI estará disponible en `https://localhost:7224/swagger`.
 
-    * **Elimina y genera tus migraciones (para asegurar un estado limpio):**
-        1.  En el Explorador de Soluciones de Visual Studio, elimina la carpeta `Migrations` dentro de tu proyecto `fullstack-net-react`.
-        2.  En la Consola del Administrador de Paquetes (asegurándote de que `fullstack-net-react` esté seleccionado como proyecto predeterminado), genera una nueva migración:
-            ```powershell
-            Add-Migration InitialSetupWithIdentity
-            ```
-            Esto creará una nueva carpeta `Migrations` y un archivo de migración que contiene todo el esquema de la base de datos (incluidas las tablas de Identity y tus modelos de la aplicación).
-        3.  Aplica la migración a la base de datos:
-            ```powershell
-            Update-Database
-            ```
-            Este comando creará la base de datos `EcommerceDb` (si no existe) y aplicará el esquema definido en la migración `InitialSetupWithIdentity`.
-
-4.  **Ejecuta el Backend:**
-    Desde la carpeta raíz de tu proyecto backend (`D:\Repositories\fullstack-net-react\backend\fullstack-net-react\fullstack-net-react`), ejecuta:
+    **Alternativa (desde la terminal):**
     ```bash
+    cd backend/
     dotnet run
     ```
-    Esto iniciará la API. Si es la primera vez que la ejecutas con una base de datos recién creada, la lógica de *seeding* en `Program.cs` se ejecutará para poblar roles, un usuario administrador y productos de ejemplo.
-    La API estará disponible en `https://localhost:7224` (o el puerto que se muestre en tu consola). La interfaz de Swagger UI estará en `https://localhost:7224/swagger`.
 
-### 💻 Configuración del Frontend
+### 3. Configuración del Frontend (React App)
 
-1.  **Navega al directorio del frontend:**
-    Abre una **nueva terminal** y navega a la carpeta de tu proyecto frontend (ej. `D:\Repositories\fullstack-net-react\frontend`).
-
+1.  **Navega a la carpeta del frontend:**
     ```bash
-    cd D:\Repositories\fullstack-net-react\frontend
+    cd frontend/
     ```
-
-2.  **Instala las dependencias de Node.js:**
+2.  **Instala las dependencias:**
     ```bash
     npm install
-    # o si usas yarn: yarn install
+    # o
+    yarn install
     ```
+3.  **Configura la URL de la API:**
+    * Crea un archivo `.env` en la raíz de la carpeta `frontend/`.
+    * Añade la URL de tu API backend:
+        ```
+        VITE_API_BASE_URL=https://localhost:7224/api
+        ```
+    * **Nota:** Si tu API se ejecuta en un puerto diferente, asegúrate de actualizar esta URL.
 
-3.  **Inicia el Frontend:**
+4.  **Ejecuta el Frontend:**
     ```bash
     npm run dev
-    # o si usas yarn: yarn dev
+    # o
+    yarn dev
     ```
-    Esto iniciará la aplicación React. Normalmente se abrirá en `http://localhost:5173`.
+    La aplicación de React se abrirá en tu navegador (normalmente en `http://localhost:5173`).
 
-## 🔒 Autenticación y Uso
+### Cómo Probar el Login y Acceder a la API (Usando Swagger UI)
 
-Al iniciar el backend por primera vez con la base de datos vacía, se creará un usuario administrador y roles predefinidos gracias a la lógica de *seeding* en tu `Program.cs`.
-
-### Credenciales del Usuario Administrador (por defecto):
-
-* **Usuario (Username):** `admin`
-* **Contraseña (Password):** `AdminPassword123!`
-    * **¡Importante!** Verifica estas credenciales en tu archivo `Program.cs` para asegurarte de que son las correctas, ya que podrían haber sido modificadas.
-
-### Cómo Probar el Login y Acceder a la API
+Para probar la autenticación y los endpoints protegidos:
 
 1.  **Accede a Swagger UI:**
     Abre tu navegador y ve a `https://localhost:7224/swagger`.
 
-2.  **Realiza el Login:**
-    * Busca el endpoint `POST /api/Auth/login`.
+2.  **Realiza el Login (Regístrate si no tienes cuenta):**
+    * Busca el endpoint `POST /api/Auth/register` y crea un nuevo usuario.
+    * Luego, busca el endpoint `POST /api/Auth/login`.
     * Haz clic en **"Try it out"**.
-    * En el campo `Request body`, introduce las credenciales del usuario administrador:
+    * En el campo `Request body`, introduce las credenciales de un usuario existente (ej. el que acabas de registrar o, si ya configuraste seed data, el usuario administrador):
         ```json
         {
           "username": "admin",
@@ -171,7 +150,10 @@ Al iniciar el backend por primera vez con la base de datos vacía, se creará un
     * Haz clic en "Authorize" y luego en "Close".
 
 4.  **Prueba un Endpoint Protegido:**
-    * Ahora puedes probar cualquier endpoint de tu API que requiera autenticación (por ejemplo, `GET /api/Products` si lo tienes protegido, o un `POST`/`PUT`).
-    * Haz clic en "Try it out" y luego en "Execute".
-    * Si la autorización fue exitosa, deberías obtener una respuesta `200 OK` o el resultado esperado, en lugar de un `401 Unauthorized` o `403 Forbidden`.
-````
+    * Ahora puedes probar cualquier endpoint de tu API que requiera autenticación (por ejemplo, `GET /api/Products` si lo tienes protegido, o cualquier endpoint con `[Authorize]` en el controlador). Deberías recibir una respuesta `200 OK` en lugar de `401 Unauthorized`.
+
+---
+
+## 🔜 En desarrollo...
+
+Este proyecto está en etapa de desarrollo activo. Próximamente se añadirán más funcionalidades y mejoras. 🚧
