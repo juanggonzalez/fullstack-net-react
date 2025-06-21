@@ -88,6 +88,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // Ejemplo de servicio (asegúrate de que IProductService y ProductService existan y sean correctos)
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
