@@ -1,4 +1,3 @@
-````markdown
 # 🧩 Full Stack App: .NET + React
 
 Aplicación full stack de comercio electrónico con un robusto backend en **ASP.NET Core** y un moderno frontend en **React**.
