@@ -5,7 +5,7 @@ Aplicación full stack de comercio electrónico con un robusto backend en **ASP.
 ## 🛠️ Tecnologías Principales
 
 ### Backend
-* **.NET 8** (o la versión que tengas en tu `.csproj`, por ejemplo `net8.0`)
+* **.NET 8** 
 * **C#**
 * **ASP.NET Core Web API**
 * **Entity Framework Core** para ORM
