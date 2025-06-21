@@ -1,5 +1,3 @@
-Claro, aquí tienes el contenido completo del `README.md` que puedes copiar y pegar directamente en tu archivo `README.md` en la raíz de tu repositorio:
-
 ````markdown
 # 🧩 Full Stack App: .NET + React
 
