@@ -1,12 +1,11 @@
-﻿// Backend/Services/AuthService.cs
-using Microsoft.AspNetCore.Identity;
-using System.IdentityModel.Tokens.Jwt; // Para JWT
-using System.Security.Claims; // Para JWT
-using System.Text; // Para JWT
-using Microsoft.IdentityModel.Tokens; // Para JWT
+﻿using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt; 
+using System.Security.Claims; 
+using System.Text; 
+using Microsoft.IdentityModel.Tokens; 
 using EcommerceApi.Dtos;
 using EcommerceApi.Models;
-using fullstack_net_react.Dtos; // Para ApplicationUser
+using fullstack_net_react.Dtos; 
 
 namespace EcommerceApi.Services
 {
@@ -27,7 +26,7 @@ namespace EcommerceApi.Services
             {
                 UserName = registerDto.Username,
                 Email = registerDto.Email,
-                EmailConfirmed = true, // Para desarrollo, puedes marcarlo como true
+                EmailConfirmed = true, 
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName
             };
@@ -39,12 +38,10 @@ namespace EcommerceApi.Services
                 return Tuple.Create(false, result.Errors.Select(e => e.Description));
             }
 
-            // Asigna el rol por defecto (ej. "User")
             var roleResult = await _userManager.AddToRoleAsync(user, "User");
             if (!roleResult.Succeeded)
             {
-                // Manejar si la asignación de rol falla (ej. borrar el usuario creado)
-                await _userManager.DeleteAsync(user); // Opcional: borrar el usuario si el rol no se puede asignar
+                await _userManager.DeleteAsync(user); 
                 return Tuple.Create(false, new List<string> { "Usuario registrado, pero no se pudo asignar el rol por defecto." } as IEnumerable<string>);
             }
 
@@ -56,15 +53,14 @@ namespace EcommerceApi.Services
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
-                return null; // Credenciales inválidas
+                return null; 
             }
 
-            // Lógica para generar JWT (moverla desde el controlador)
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id) // Agrega el ID de usuario como Claim
+                new Claim(ClaimTypes.NameIdentifier, user.Id) 
             };
 
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -86,7 +82,7 @@ namespace EcommerceApi.Services
             return new LoginResponseDto
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                User = new UserDto // Crea un DTO simple para el usuario logeado si no tienes uno
+                User = new UserDto 
                 {
                     Id = user.Id,
                     Username = user.UserName,

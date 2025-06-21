@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '../features/products/productsSlice';
 
-// Importa el componente de filtros
 import ProductFilters from './ProductFilters';
 
-// Componentes de Material-UI
 import {
   Container, Grid, Card, CardContent, CardMedia, Typography,
   Button, CircularProgress, Box, Pagination, FormControl, Select, MenuItem
@@ -18,17 +16,14 @@ function ProductList({ globalSearchQuery }) {
   const error = useSelector((state) => state.products.error);
   const totalProducts = useSelector((state) => state.products.totalCount);
 
-  // Estados para filtros (manejados aquí y pasados a ProductFilters)
   const [categoryId, setCategoryId] = useState('');
   const [brandId, setBrandId] = useState('');
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [sortBy, setSortBy] = useState('');
 
-  // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
 
-  // Datos de categorías y marcas (hardcodeadas para el ejemplo)
   const categories = [
     { id: 1, name: 'Electronics' },
     { id: 2, name: 'Books' },
@@ -41,7 +36,6 @@ function ProductList({ globalSearchQuery }) {
     { id: 3, name: 'FashionWear' },
   ];
 
-  // Disparar la búsqueda cuando cambian los filtros o la paginación
   useEffect(() => {
     dispatch(fetchProducts({
       search: globalSearchQuery,
@@ -53,26 +47,15 @@ function ProductList({ globalSearchQuery }) {
       pageSize,
       sortBy
     }));
-    // Resetear la página si cambia la búsqueda global (importante para una UX limpia)
-    // Este effect se dispara por cada cambio en los filtros, por lo que el setCurrentPage(1)
-    // debe ser condicional para evitar un loop infinito o resetear siempre.
-    // Lo ideal es que el setCurrentPage(1) se haga en los handlers de cambio de filtro.
-    // Ya lo tenemos en los handlers, así que aquí solo nos aseguramos de que el globalSearchQuery
-    // también resetea la página si es un cambio "externo".
-    // Si globalSearchQuery cambia, aseguramos que se reajuste la página.
-    // Sin embargo, si ya está manejado por los callbacks de ProductFilters,
-    // es mejor que el useEffect solo reaccione a los cambios y no resetee la página aquí.
-    // Quité el setCurrentPage(1) de aquí, ya que los setters en los handlers lo manejan.
+
   }, [dispatch, globalSearchQuery, categoryId, brandId, priceRange, currentPage, pageSize, sortBy]);
 
-  // Funciones para actualizar los estados de los filtros y resetear la página
-  // Estas funciones ahora se pasan al componente ProductFilters
+
   const handleCategoryChange = (value) => { setCategoryId(value); setCurrentPage(1); };
   const handleBrandChange = (value) => { setBrandId(value); setCurrentPage(1); };
-  const handlePriceRangeChange = (value) => { setPriceRange(value); setCurrentPage(1); }; // Disparado al soltar el slider
+  const handlePriceRangeChange = (value) => { setPriceRange(value); setCurrentPage(1); };
   const handleSortByChange = (value) => { setSortBy(value); setCurrentPage(1); };
 
-  // Función para limpiar todos los filtros (excepto la búsqueda global)
   const handleClearAllFilters = () => {
     setCategoryId('');
     setBrandId('');
@@ -152,12 +135,11 @@ function ProductList({ globalSearchQuery }) {
   const totalPages = Math.ceil(totalProducts / pageSize);
 
   return (
-    <Container maxWidth="lg" sx={{ flexGrow: 1, mb: 4, mt: 0 }}> {/* mt: 0 para acercar los filtros al AppBar */}
+    <Container maxWidth="lg" sx={{ flexGrow: 1, mb: 4, mt: 0 }}> 
       <Typography variant="h4" component="h2" gutterBottom align="center" sx={{ mb: 3, color: 'text.primary' }}>
         Explora Nuestros Productos
       </Typography>
 
-      {/* Renderiza el componente ProductFilters y pasa las props */}
       <ProductFilters
         categoryId={categoryId} setCategoryId={handleCategoryChange}
         brandId={brandId} setBrandId={handleBrandChange}
@@ -170,7 +152,6 @@ function ProductList({ globalSearchQuery }) {
 
       {content}
 
-      {/* Paginación */}
       {totalPages > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4, mb: 4, gap: 2 }}>
           <Pagination

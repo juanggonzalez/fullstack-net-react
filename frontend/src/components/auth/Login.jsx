@@ -1,4 +1,3 @@
-// src/components/auth/Login.jsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../features/auth/authSlice';
@@ -8,15 +7,14 @@ import {
   Button,
   Typography,
   Box,
-  Paper, // Import Paper
-  Snackbar, // Import Snackbar
-  Alert, // Import Alert for Snackbar content
-  Slide, // Import Slide for Snackbar transition
-  useTheme, // Import useTheme to access palette colors
+  Paper, 
+  Snackbar, 
+  Alert, 
+  Slide, 
+  useTheme, 
 } from '@mui/material';
-import { motion } from 'framer-motion'; // Import framer-motion
+import { motion } from 'framer-motion'; 
 
-// Función de transición para el Snackbar (opcional, pero añade suavidad)
 function TransitionLeft(props) {
   return <Slide {...props} direction="left" />;
 }
@@ -26,29 +24,25 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const theme = useTheme(); // Hook para acceder al tema de Material-UI
+  const theme = useTheme(); 
 
   const { status, error, isAuthenticated } = useSelector((state) => state.auth);
 
-  // Estados para controlar el Snackbar (toast)
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info'); // 'success', 'error', 'warning', 'info'
+  const [snackbarSeverity, setSnackbarSeverity] = useState('info'); 
 
-  // Efecto para redirigir en caso de autenticación exitosa
   useEffect(() => {
     if (isAuthenticated) {
       setSnackbarMessage('¡Inicio de sesión exitoso!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
-      // Retrasa la navegación ligeramente para que el toast sea visible
       setTimeout(() => {
         navigate('/');
-      }, 1500); // 1.5 segundos
+      }, 1500); 
     }
   }, [isAuthenticated, navigate]);
 
-  // Efecto para mostrar errores del API en el Snackbar
   useEffect(() => {
     if (status === 'failed' && error) {
       setSnackbarMessage(error.title || error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
@@ -57,21 +51,17 @@ const Login = () => {
     }
   }, [status, error]);
 
-  // Manejador del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validación básica antes de enviar la solicitud
     if (username.trim() === '' || password.trim() === '') {
         setSnackbarMessage('Por favor, ingresa tu nombre de usuario y contraseña.');
         setSnackbarSeverity('warning');
         setSnackbarOpen(true);
         return;
     }
-    // Dispara la acción asíncrona de login
     dispatch(login({ username, password }));
   };
 
-  // Manejador para cerrar el Snackbar
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -79,7 +69,6 @@ const Login = () => {
     setSnackbarOpen(false);
   };
 
-  // Define un fondo de gradiente sutil usando colores de la paleta del tema
   const gradientBackground = `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.secondary.light} 100%)`;
 
   return (
@@ -89,28 +78,27 @@ const Login = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: gradientBackground, // Aplica el gradiente de fondo
-        p: 2, // Padding general para asegurar que no toque los bordes en pantallas pequeñas
+        background: gradientBackground, 
+        p: 2, 
       }}
     >
-      {/* Animación de entrada para el contenedor del formulario */}
       <motion.div
-        initial={{ opacity: 0, y: -50 }} // Empieza invisible y ligeramente arriba
-        animate={{ opacity: 1, y: 0 }}   // Anima a visible y a su posición
-        transition={{ duration: 0.5 }}   // Duración de la animación
+        initial={{ opacity: 0, y: -50 }} 
+        animate={{ opacity: 1, y: 0 }}   
+        transition={{ duration: 0.5 }}   
       >
         <Paper
-          elevation={6} // Elevación para dar un efecto 3D
+          elevation={6} 
           sx={{
-            p: 4, // Padding interno del Paper
+            p: 4, 
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            maxWidth: '400px', // Ancho máximo para el formulario
+            maxWidth: '400px', 
             width: '100%',
-            borderRadius: '12px', // Bordes redondeados
-            boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.2)', // Sombra más pronunciada
-            background: theme.palette.background.paper, // Usa el color de fondo de Paper del tema
+            borderRadius: '12px', 
+            boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.2)', 
+            background: theme.palette.background.paper, 
           }}
         >
           <Typography component="h1" variant="h5" sx={{ mb: 2, color: theme.palette.primary.main }}>
@@ -128,7 +116,7 @@ const Login = () => {
               autoFocus
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              variant="outlined" // Estilo de borde del TextField
+              variant="outlined" 
             />
             <TextField
               margin="normal"
@@ -147,8 +135,8 @@ const Login = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, py: 1.2, fontSize: '1.1rem' }} // Botón más grande y con más padding vertical
-              disabled={status === 'loading'} // Deshabilita el botón mientras carga
+              sx={{ mt: 3, mb: 2, py: 1.2, fontSize: '1.1rem' }} 
+              disabled={status === 'loading'} 
             >
               {status === 'loading' ? 'Iniciando sesión...' : 'Login'}
             </Button>
@@ -156,7 +144,7 @@ const Login = () => {
               fullWidth
               variant="text"
               onClick={() => navigate('/register')}
-              sx={{ color: theme.palette.text.secondary }} // Color de texto secundario del tema
+              sx={{ color: theme.palette.text.secondary }} 
             >
               ¿No tienes cuenta? Regístrate
             </Button>
@@ -164,13 +152,12 @@ const Login = () => {
         </Paper>
       </motion.div>
 
-      {/* Snackbar para mostrar mensajes de éxito/error/advertencia */}
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={4000} // Duración del toast
+        autoHideDuration={4000} 
         onClose={handleSnackbarClose}
-        TransitionComponent={TransitionLeft} // Animación de entrada
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} // Posición del toast
+        TransitionComponent={TransitionLeft} 
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
       >
         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}

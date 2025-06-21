@@ -1,8 +1,7 @@
-﻿// fullstack-net-react/Data/ApplicationDbContext.cs
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using EcommerceApi.Models;
-using Microsoft.AspNetCore.Identity; // Asegúrate de tener este using
+using Microsoft.AspNetCore.Identity; 
 
 namespace EcommerceApi.Data
 {
@@ -50,7 +49,7 @@ namespace EcommerceApi.Data
                 new Brand { Id = 3, Name = "FashionWear", Description = "Trendy clothing brand" }
             );
 
-            // Relaciones de tus entidades (según tu ApplicationDbContext.cs)
+            // Relaciones de tus entidades 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)

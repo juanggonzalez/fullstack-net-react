@@ -31,11 +31,10 @@ namespace EcommerceApi.Controllers
             var products = await _productService.GetFilteredProductsAsync(
                 search, categoryId, brandId, minPrice, maxPrice,
                 pageNumber, pageSize, sortBy,
-                includeCategory: true, // Siempre incluimos categoría para el DTO
-                includeBrand: true // Siempre incluimos marca para el DTO
+                includeCategory: true, 
+                includeBrand: true 
             );
 
-            // Para devolver el número total de ítems para paginación
             var totalCount = await _productService.GetTotalProductCountAsync(search, categoryId, brandId, minPrice, maxPrice);
             Response.Headers.Append("X-Total-Count", totalCount.ToString());
 

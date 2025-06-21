@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProductList from './components/ProductList';
@@ -7,7 +6,7 @@ import UserMenu from './components/UserMenu';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import NotFound from './components/error/NotFound'; // <--- Importa el componente NotFound
+import NotFound from './components/error/NotFound'; 
 import {
   AppBar, Toolbar, Typography, Box
 } from '@mui/material';
@@ -66,11 +65,9 @@ function App() {
               </MainLayout>
             }
           />
-          {/* Aquí puedes añadir más rutas protegidas */}
         </Route>
 
-        {/* Ruta para 404 Not Found - DEBE SER LA ÚLTIMA RUTA */}
-        <Route path="*" element={<NotFound />} /> {/* <--- Añade esta línea */}
+        <Route path="*" element={<NotFound />} /> 
       </Routes>
     </Router>
   );

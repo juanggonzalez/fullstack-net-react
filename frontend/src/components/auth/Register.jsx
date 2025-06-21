@@ -1,4 +1,3 @@
-// src/components/auth/Register.jsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { register } from '../../features/auth/authSlice';
@@ -23,7 +22,7 @@ function TransitionRight(props) {
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // Nuevo estado para ConfirmPassword
+  const [confirmPassword, setConfirmPassword] = useState(''); 
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -37,7 +36,6 @@ const Register = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('info');
 
-  // Efecto para mostrar mensajes de registro y redirigir
   useEffect(() => {
     if (status === 'succeeded' && !error) {
       setSnackbarMessage('¡Registro exitoso! Ahora puedes iniciar sesión.');
@@ -47,8 +45,7 @@ const Register = () => {
         navigate('/login');
       }, 2000);
     } else if (status === 'failed' && error) {
-      // El mensaje de error ya viene procesado por el interceptor de Axios
-      setSnackbarMessage(error); // error ahora es el string del mensaje amigable
+      setSnackbarMessage(error); 
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
@@ -57,14 +54,12 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación básica de todos los campos
     if (
       username.trim() === '' ||
       password.trim() === '' ||
-      confirmPassword.trim() === '' || // Validar confirmPassword también
+      confirmPassword.trim() === '' || 
       email.trim() === ''
-      // firstName.trim() === '' || // firstName y lastName pueden ser opcionales en el backend
-      // lastName.trim() === ''
+
     ) {
       setSnackbarMessage('Por favor, completa todos los campos requeridos (usuario, contraseña, email).');
       setSnackbarSeverity('warning');
@@ -72,7 +67,6 @@ const Register = () => {
       return;
     }
 
-    // Validación de coincidencia de contraseñas ANTES de enviar al backend
     if (password !== confirmPassword) {
       setSnackbarMessage('La contraseña y la confirmación de contraseña no coinciden.');
       setSnackbarSeverity('warning');
@@ -80,7 +74,6 @@ const Register = () => {
       return;
     }
 
-    // Dispara la acción asíncrona de registro, incluyendo confirmPassword
     dispatch(register({ username, password, confirmPassword, email, firstName, lastName }));
   };
 
@@ -157,11 +150,11 @@ const Register = () => {
               margin="normal"
               required
               fullWidth
-              name="confirmPassword" // Nuevo campo
-              label="Confirmar Contraseña" // Nuevo label
+              name="confirmPassword" 
+              label="Confirmar Contraseña" 
               type="password"
-              id="confirmPassword" // Nuevo ID
-              autoComplete="new-password" // Nuevo autocomplete
+              id="confirmPassword" 
+              autoComplete="new-password" 
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               variant="outlined"

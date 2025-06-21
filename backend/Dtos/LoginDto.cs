@@ -1,7 +1,6 @@
-﻿// fullstack-net-react/Models/LoginDto.cs
-using System.ComponentModel.DataAnnotations; // Para validaciones
+﻿using System.ComponentModel.DataAnnotations; 
 
-namespace EcommerceApi.Models // Asegúrate que el namespace sea correcto
+namespace EcommerceApi.Models 
 {
     public class LoginDto
     {

@@ -3,41 +3,36 @@
 using Microsoft.EntityFrameworkCore;
 using EcommerceApi.Data;
 using System.Text.Json.Serialization;
-using EcommerceApi.Models; // Asegúrate de que tus modelos (ApplicationUser, Product, LoginDto, RegisterDto) estén aquí
-using EcommerceApi.Services; // Asegúrate de que tus servicios (IProductService, ProductService) estén aquí
+using EcommerceApi.Models; 
+using EcommerceApi.Services; 
 
 // Para Identity y JWT
-using Microsoft.AspNetCore.Identity; // Necesario para UserManager, RoleManager, IdentityUser, IdentityRole
-using Microsoft.AspNetCore.Authentication.JwtBearer; // Necesario para AddJwtBearer
-using Microsoft.IdentityModel.Tokens; // Necesario para SymmetricSecurityKey, TokenValidationParameters
-using System.Text; // Necesario para Encoding.UTF8
-using System.Security.Claims; // Necesario para ClaimTypes
-// Ya no necesitamos BCrypt.Net aquí directamente, Identity lo maneja.
-// using BCrypt.Net; 
+using Microsoft.AspNetCore.Identity; 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens; 
+using System.Text; 
+using System.Security.Claims; 
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Configuración de Servicios ---
+// --- Configuraciï¿½n de Servicios ---
 
-// Configuración de DbContext con SQL Server LocalDB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configuración de ASP.NET Core Identity
-// Usamos ApplicationUser porque ya lo has definido para propiedades adicionales.
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; // Puedes cambiar esto para requerir confirmación de email
-    // Opciones de contraseña (ajusta según tus necesidades de seguridad en desarrollo)
+    options.SignIn.RequireConfirmedAccount = false; 
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 6; // Mínimo de 6 caracteres para la contraseña de Identity
+    options.Password.RequiredLength = 6; 
     options.Password.RequiredUniqueChars = 0;
 })
-.AddRoles<IdentityRole>() // ¡Añade soporte para roles!
-.AddEntityFrameworkStores<ApplicationDbContext>(); // Conecta Identity a tu DbContext
+.AddRoles<IdentityRole>() 
+.AddEntityFrameworkStores<ApplicationDbContext>(); 
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -51,7 +46,6 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// --- Configuración de Autenticación JWT ---
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -72,9 +66,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization(); // Habilitar autorización
+builder.Services.AddAuthorization(); 
 
-// Configuración de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
@@ -86,13 +79,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
-// Ejemplo de servicio (asegúrate de que IProductService y ProductService existan y sean correctos)
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
-// --- Configuración del Pipeline HTTP ---
 
 if (app.Environment.IsDevelopment())
 {
@@ -102,22 +93,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowSpecificOrigin"); // Debe ir antes de UseAuthentication/UseAuthorization
+app.UseCors("AllowSpecificOrigin"); 
 
-app.UseAuthentication(); // Debe ir antes de UseAuthorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
-// --- INICIO: SEED DATA PARA ROLES, USUARIOS Y PRODUCTOS ---
-// Este bloque de código se ejecutará al iniciar la aplicación para inicializar la DB y datos
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>(); // Instancia de UserManager para ApplicationUser
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>(); // Instancia de RoleManager
-    var logger = services.GetRequiredService<ILogger<Program>>(); // Logger para errores
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>(); 
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>(); 
+    var logger = services.GetRequiredService<ILogger<Program>>(); 
 
-    // 1. Aplicar migraciones pendientes (si no las has aplicado manualmente con 'dotnet ef database update')
+    
     try
     {
         dbContext.Database.Migrate();
@@ -126,10 +115,9 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         logger.LogError(ex, "An error occurred while applying database migrations.");
-        // Considera si quieres que la aplicación falle aquí si las migraciones no se aplican
+        
     }
 
-    // 2. Seed de Roles: Crea los roles "Admin" y "User" si no existen
     string[] roleNames = { "Admin", "User" };
     foreach (var roleName in roleNames)
     {
@@ -148,23 +136,20 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // 3. Seed del usuario administrador: Crea el usuario "admin" si no existe y le asigna el rol "Admin"
     var adminUser = await userManager.FindByNameAsync("admin");
     if (adminUser == null)
     {
-        adminUser = new ApplicationUser // Usa tu ApplicationUser
+        adminUser = new ApplicationUser 
         {
             UserName = "admin",
-            Email = "admin@example.com", // Es buena práctica tener un email para usuarios de Identity
-            EmailConfirmed = true,       // Marca como confirmado para desarrollo (no requiere verificación real)
-            FirstName = "Super",         // Ejemplo de propiedades adicionales
+            Email = "admin@example.com", 
+            EmailConfirmed = true,       
+            FirstName = "Super",         
             LastName = "Admin"
         };
-        // Crea el usuario con la contraseña. Identity se encarga del hashing.
-        var createAdminResult = await userManager.CreateAsync(adminUser, "AdminPassword123!"); // ¡CAMBIA ESTA CONTRASEÑA POR UNA SEGURA Y RECUÉRDALA!
+        var createAdminResult = await userManager.CreateAsync(adminUser, "AdminPassword123!"); 
         if (createAdminResult.Succeeded)
         {
-            // Asigna el rol "Admin" al usuario recién creado
             var addRoleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
             if (addRoleResult.Succeeded)
             {
@@ -184,7 +169,6 @@ using (var scope = app.Services.CreateScope())
             }
         }
     }
-    // Opcional: Asegurarse de que el usuario 'admin' tenga el rol 'Admin' si ya existía pero por alguna razón no tenía el rol.
     else if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
     {
         var addRoleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -199,30 +183,24 @@ using (var scope = app.Services.CreateScope())
     }
 
 
-    // 4. Seed de productos de ejemplo: Agrega productos si la tabla de Productos está vacía
-    // Nota: Si ya tienes Product y Category/Brand Seed en OnModelCreating, esto podría duplicarlos
-    // Considera consolidar todo el seeding en un solo lugar (OnModelCreating o este bloque).
-    // Aquí asumo que quieres que este bloque maneje el seeding de productos también.
-    if (!dbContext.Products.Any()) // Asume que tienes un DbSet<Product> en tu DbContext
+
+    if (!dbContext.Products.Any()) 
     {
         var products = new List<Product>
         {
-            // Asegúrate de que las CategoryId y BrandId coincidan con los IDs que se siembran en ApplicationDbContext.cs
             new Product { Name = "Laptop Gamer XYZ", Description = "Potente laptop para juegos.", Price = 1200.00m, Stock = 10, CategoryId = 1, BrandId = 1 },
             new Product { Name = "Monitor UltraWide 4K", Description = "Experiencia visual inmersiva.", Price = 450.00m, Stock = 25, CategoryId = 1, BrandId = 1 },
-            new Product { Name = "Teclado Mecánico RGB", Description = "Teclado de alto rendimiento.", Price = 90.00m, Stock = 50, CategoryId = 1, BrandId = 1 },
-            new Product { Name = "Mouse Gaming Pro", Description = "Ratón ergonómico alta precisión.", Price = 55.00m, Stock = 75, CategoryId = 1, BrandId = 1 },
-            new Product { Name = "El Señor de los Anillos", Description = "Novela épica de fantasía.", Price = 25.00m, Stock = 100, CategoryId = 2, BrandId = 2 },
-            new Product { Name = "1984", Description = "Novela distópica de George Orwell.", Price = 15.00m, Stock = 80, CategoryId = 2, BrandId = 2 },
-            new Product { Name = "Camiseta Algodón Premium", Description = "Camiseta suave y cómoda.", Price = 30.00m, Stock = 200, CategoryId = 3, BrandId = 3 },
+            new Product { Name = "Teclado Mecï¿½nico RGB", Description = "Teclado de alto rendimiento.", Price = 90.00m, Stock = 50, CategoryId = 1, BrandId = 1 },
+            new Product { Name = "Mouse Gaming Pro", Description = "Ratï¿½n ergonï¿½mico alta precisiï¿½n.", Price = 55.00m, Stock = 75, CategoryId = 1, BrandId = 1 },
+            new Product { Name = "El Seï¿½or de los Anillos", Description = "Novela ï¿½pica de fantasï¿½a.", Price = 25.00m, Stock = 100, CategoryId = 2, BrandId = 2 },
+            new Product { Name = "1984", Description = "Novela distï¿½pica de George Orwell.", Price = 15.00m, Stock = 80, CategoryId = 2, BrandId = 2 },
+            new Product { Name = "Camiseta Algodï¿½n Premium", Description = "Camiseta suave y cï¿½moda.", Price = 30.00m, Stock = 200, CategoryId = 3, BrandId = 3 },
             new Product { Name = "Jeans Slim Fit", Description = "Jeans ajustados de moda.", Price = 60.00m, Stock = 150, CategoryId = 3, BrandId = 3 }
         };
         dbContext.Products.AddRange(products);
-        await dbContext.SaveChangesAsync(); // Guardar todos los cambios de seed data de productos
-        logger.LogInformation("Productos de ejemplo creados exitosamente.");
+        await dbContext.SaveChangesAsync(); 
     }
 }
-// --- FIN: SEED DATA ---
 
 app.MapControllers();
 

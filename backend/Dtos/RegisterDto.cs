@@ -1,7 +1,6 @@
-﻿// TuCarpetaDtos/RegisterDto.cs (o donde lo tengas)
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceApi.Dtos // Ajusta el namespace según tu proyecto
+namespace EcommerceApi.Dtos 
 {
     public class RegisterDto
     {
@@ -15,18 +14,17 @@ namespace EcommerceApi.Dtos // Ajusta el namespace según tu proyecto
 
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "La contraseña y la contraseña de confirmación no coinciden.")]
-        [Required(ErrorMessage = "La confirmación de contraseña es requerida.")] // Asegura que ConfirmPassword sea requerido
-        public string ConfirmPassword { get; set; } // <<-- ESTE CAMPO ES NECESARIO
+        [Required(ErrorMessage = "La confirmación de contraseña es requerida.")] 
+        public string ConfirmPassword { get; set; } 
 
         [Required(ErrorMessage = "El email es requerido.")]
         [EmailAddress(ErrorMessage = "Formato de email inválido.")]
         public string Email { get; set; }
 
-        // [Optional] Puedes hacer estos campos opcionales quitando [Required]
         [MaxLength(100, ErrorMessage = "El nombre no puede exceder los 100 caracteres.")]
-        public string? FirstName { get; set; } // Puede ser nullable si no es requerido
+        public string? FirstName { get; set; } 
 
         [MaxLength(100, ErrorMessage = "El apellido no puede exceder los 100 caracteres.")]
-        public string? LastName { get; set; } // Puede ser nullable si no es requerido
+        public string? LastName { get; set; } 
     }
 }

@@ -21,12 +21,10 @@ function ProductFilters({
 
   return (
     <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
-      <Grid container spacing={2} alignItems="flex-end"> {/* Espaciado entre items */}
+      <Grid container spacing={2} alignItems="flex-end"> 
 
-        {/* Filtro por Categoría */}
-        {/* xs=12 (móvil: ancho completo), sm=6 (tablet: 2 por fila), md=2 (desktop: 5 por fila) */}
         <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth variant="outlined"> {/* Eliminado size="small" */}
+          <FormControl fullWidth variant="outlined"> 
             <InputLabel>Categoría</InputLabel>
             <Select
               value={categoryId}
@@ -45,9 +43,8 @@ function ProductFilters({
           </FormControl>
         </Grid>
 
-        {/* Filtro por Marca */}
         <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth variant="outlined"> {/* Eliminado size="small" */}
+          <FormControl fullWidth variant="outlined"> 
             <InputLabel>Marca</InputLabel>
             <Select
               value={brandId}
@@ -66,8 +63,6 @@ function ProductFilters({
           </FormControl>
         </Grid>
 
-        {/* Filtro por Rango de Precio */}
-        {/* sm=12 para dar espacio completo al slider en tablets, md=4 para desktop */}
         <Grid item xs={12} sm={12} md={4}>
           <Box sx={{ px: 1 }}>
             <Typography gutterBottom variant="subtitle2" color="text.secondary">Rango de Precio: ${priceRange[0]} - ${priceRange[1]}{priceRange[1] === 1000 ? '+' : ''}</Typography>
@@ -87,9 +82,8 @@ function ProductFilters({
           </Box>
         </Grid>
 
-        {/* Ordenar por */}
         <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth variant="outlined"> {/* Eliminado size="small" */}
+          <FormControl fullWidth variant="outlined"> 
             <InputLabel>Ordenar por</InputLabel>
             <Select
               value={sortBy}
@@ -107,8 +101,6 @@ function ProductFilters({
           </FormControl>
         </Grid>
 
-        {/* Botón para Limpiar Filtros */}
-        {/* md=2 para que pueda caber en la misma fila que los otros filtros */}
         <Grid item xs={12} sm={6} md={2} sx={{ display: 'flex', justifyContent: 'flex-end', pt: { xs: 2, md: 0 } }}>
           <Button
             variant="outlined"

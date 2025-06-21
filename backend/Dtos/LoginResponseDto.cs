@@ -3,6 +3,6 @@
     public class LoginResponseDto
     {
         public string Token { get; set; }
-        public UserDto User { get; set; } // Podrías necesitar crear este UserDto
+        public UserDto User { get; set; } 
     }
 }

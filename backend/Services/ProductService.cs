@@ -24,7 +24,7 @@ namespace EcommerceApi.Services
         {
             var products = await _context.Products
                                         .Include(p => p.Category)
-                                        .Include(p => p.Brand) // Incluir Brand si lo usas
+                                        .Include(p => p.Brand) 
                                         .ToListAsync();
             return _mapper.Map<IEnumerable<ProductDto>>(products);
         }
@@ -54,8 +54,8 @@ namespace EcommerceApi.Services
             var product = await _context.Products.FindAsync(productDto.Id);
             if (product == null) return false;
 
-            _mapper.Map(productDto, product); // Mapea los cambios del DTO al modelo existente
-            product.UpdatedAt = DateTime.UtcNow; // Actualiza la fecha de modificación
+            _mapper.Map(productDto, product); 
+            product.UpdatedAt = DateTime.UtcNow; 
 
             _context.Entry(product).State = EntityState.Modified;
             try
@@ -128,7 +128,6 @@ namespace EcommerceApi.Services
         {
             IQueryable<Product> query = _context.Products;
 
-            // Aplicar inclusiones
             if (includeCategory)
             {
                 query = query.Include(p => p.Category);
@@ -138,7 +137,6 @@ namespace EcommerceApi.Services
                 query = query.Include(p => p.Brand);
             }
 
-            // Aplicar filtros
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(p => p.Name.Contains(search) || p.Description!.Contains(search) || p.Sku.Contains(search));
@@ -164,17 +162,15 @@ namespace EcommerceApi.Services
                 query = query.Where(p => p.Price <= maxPrice.Value);
             }
 
-            // Aplicar ordenamiento
             query = sortBy?.ToLower() switch
             {
                 "priceasc" => query.OrderBy(p => p.Price),
                 "pricedesc" => query.OrderByDescending(p => p.Price),
                 "nameasc" => query.OrderBy(p => p.Name),
                 "namedesc" => query.OrderByDescending(p => p.Name),
-                _ => query.OrderBy(p => p.Id) // Orden por defecto
+                _ => query.OrderBy(p => p.Id) 
             };
 
-            // Aplicar paginación
             query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             var products = await query.ToListAsync();
@@ -185,7 +181,6 @@ namespace EcommerceApi.Services
         {
             IQueryable<Product> query = _context.Products;
 
-            // Aplicar los mismos filtros que en GetFilteredProductsAsync para obtener el conteo correcto
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(p => p.Name.Contains(search) || p.Description!.Contains(search) || p.Sku.Contains(search));

@@ -1,10 +1,8 @@
-// frontend/src/components/GlobalSearchBar.jsx
 
 import React from 'react';
 import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
-// El componente ahora acepta props para el color del label y el texto
 function GlobalSearchBar({ searchQuery, onSearchChange, inputLabelColor, inputTextColor }) {
   return (
     <TextField
@@ -14,14 +12,14 @@ function GlobalSearchBar({ searchQuery, onSearchChange, inputLabelColor, inputTe
       value={searchQuery}
       onChange={onSearchChange}
       sx={{
-        backgroundColor: 'rgba(255, 255, 255, 0.15)', // Fondo blanco translúcido
+        backgroundColor: 'rgba(255, 255, 255, 0.15)', 
         borderRadius: 1,
-        width: { xs: '100%', sm: 'auto' }, // Ocupa todo el ancho en móvil, auto en otros
-        minWidth: 200, // Ancho mínimo para desktop
-        maxWidth: 400, // Ancho máximo
+        width: { xs: '100%', sm: 'auto' }, 
+        minWidth: 200, 
+        maxWidth: 400, 
         '.MuiOutlinedInput-root': {
           borderRadius: 1,
-          '& fieldset': { // Oculta el borde por defecto (fieldset es el borde del outlined input)
+          '& fieldset': { 
             borderColor: 'transparent !important',
           },
           '&:hover fieldset': {
@@ -32,11 +30,11 @@ function GlobalSearchBar({ searchQuery, onSearchChange, inputLabelColor, inputTe
           },
         },
         input: {
-          color: inputTextColor || 'white', // Usa la prop o blanco por defecto
+          color: inputTextColor || 'white', 
         },
         label: {
-          color: inputLabelColor || 'rgba(255, 255, 255, 0.7)', // Usa la prop o un blanco translúcido
-          '&.Mui-focused': { // Color del label cuando está enfocado
+          color: inputLabelColor || 'rgba(255, 255, 255, 0.7)', 
+          '&.Mui-focused': { 
             color: inputLabelColor || 'rgba(255, 255, 255, 0.9)',
           },
         }
@@ -44,7 +42,7 @@ function GlobalSearchBar({ searchQuery, onSearchChange, inputLabelColor, inputTe
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            <SearchIcon sx={{ color: inputLabelColor || 'rgba(255, 255, 255, 0.7)' }} /> {/* Color del icono */}
+            <SearchIcon sx={{ color: inputLabelColor || 'rgba(255, 255, 255, 0.7)' }} /> 
           </InputAdornment>
         ),
       }}

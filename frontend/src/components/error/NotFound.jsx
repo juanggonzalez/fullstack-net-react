@@ -1,4 +1,3 @@
-// src/components/NotFound.jsx
 import React from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +6,7 @@ const NotFound = () => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    navigate('/'); // Redirige a la página principal
+    navigate('/'); 
   };
 
   return (
@@ -18,7 +17,7 @@ const NotFound = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '80vh', // Ocupa la mayor parte de la altura de la vista
+          minHeight: '80vh', 
           textAlign: 'center',
           p: 3,
         }}
