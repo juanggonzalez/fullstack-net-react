@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿// fullstack-net-react/Data/ApplicationDbContext.cs
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using EcommerceApi.Models;
-using Microsoft.AspNetCore.Identity; 
+using Microsoft.AspNetCore.Identity; // Asegúrate de tener este using
 
 namespace EcommerceApi.Data
 {
@@ -14,9 +15,9 @@ namespace EcommerceApi.Data
         // DbSets
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Brand> Brands { get; set; } 
+        public DbSet<Brand> Brands { get; set; }
         public DbSet<Address> Addresses { get; set; }
-        public DbSet<ShoppingCart> ShoppingCarts { get; set; } 
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -25,14 +26,16 @@ namespace EcommerceApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ApplicationUser>().ToTable("Users"); // Renombra AspNetUsers a Users
-            modelBuilder.Entity<IdentityRole>().ToTable("Roles"); // Renombra AspNetRoles a Roles
+            // Renombra las tablas de Identity para quitar el prefijo "AspNet"
+            modelBuilder.Entity<ApplicationUser>().ToTable("Users");
+            modelBuilder.Entity<IdentityRole>().ToTable("Roles");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
             modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
 
+            // Seed Data para Categorías
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Electronics", Description = "Devices and gadgets" },
                 new Category { Id = 2, Name = "Books", Description = "Literary works" },
@@ -40,13 +43,14 @@ namespace EcommerceApi.Data
                 new Category { Id = 4, Name = "Home & Kitchen", Description = "Appliances and decor" }
             );
 
+            // Seed Data para Marcas
             modelBuilder.Entity<Brand>().HasData(
                 new Brand { Id = 1, Name = "TechPro", Description = "Leading electronics manufacturer" },
                 new Brand { Id = 2, Name = "Bookworm Inc.", Description = "Publisher of classic literature" },
                 new Brand { Id = 3, Name = "FashionWear", Description = "Trendy clothing brand" }
             );
 
-            // Relaciones
+            // Relaciones de tus entidades (según tu ApplicationDbContext.cs)
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
@@ -57,17 +61,17 @@ namespace EcommerceApi.Data
                 .HasOne(p => p.Brand)
                 .WithMany(b => b.Products)
                 .HasForeignKey(p => p.BrandId)
-                .IsRequired(false) 
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Addresses)
                 .WithOne(a => a.User)
                 .HasForeignKey(a => a.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // Si se elimina el usuario, se eliminan sus direcciones
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ShoppingCart>()
-                .HasKey(sc => sc.UserId); // UserId es la PK y FK al mismo tiempo
+                .HasKey(sc => sc.UserId);
             modelBuilder.Entity<ShoppingCart>()
                 .HasOne(sc => sc.User)
                 .WithOne(u => u.ShoppingCart)
@@ -84,23 +88,23 @@ namespace EcommerceApi.Data
                 .HasOne(sci => sci.Product)
                 .WithMany(p => p.ShoppingCartItems)
                 .HasForeignKey(sci => sci.ProductId)
-                .OnDelete(DeleteBehavior.Restrict); // No borrar producto si está en carritos
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // No borrar usuario si tiene pedidos
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.ShippingAddress)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(o => o.ShippingAddressId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.BillingAddress)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(o => o.BillingAddressId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -108,14 +112,15 @@ namespace EcommerceApi.Data
                 .HasOne(oi => oi.Order)
                 .WithMany(o => o.OrderItems)
                 .HasForeignKey(oi => oi.OrderId)
-                .OnDelete(DeleteBehavior.Cascade); // Si se elimina el pedido, se eliminan sus ítems
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.Product)
                 .WithMany(p => p.OrderItems)
                 .HasForeignKey(oi => oi.ProductId)
-                .OnDelete(DeleteBehavior.Restrict); // No borrar producto si está en pedidos
+                .OnDelete(DeleteBehavior.Restrict);
 
+            // Configuración de DateTime a datetime2 para SQL Server
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 foreach (var property in entityType.GetProperties())

@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_BASE_URL = 'https://localhost:7224/api';
+// Accede a la variable de entorno de Vite
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Acción asíncrona para obtener productos (exportación directa)
-export const fetchProducts = createAsyncThunk( // <-- Asegúrate de este 'export'
+export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async ({ search = '', categoryId = null, brandId = null, minPrice = null, maxPrice = null, pageNumber = 1, pageSize = 10, sortBy = null } = {}, thunkAPI) => {
     try {
@@ -17,6 +18,7 @@ export const fetchProducts = createAsyncThunk( // <-- Asegúrate de este 'export
       params.append('pageSize', pageSize);
       if (sortBy) params.append('sortBy', sortBy);
 
+      // Usa la variable de entorno aquí
       const response = await axios.get(`${API_BASE_URL}/products?${params.toString()}`);
       const totalCount = response.headers['x-total-count'] ? parseInt(response.headers['x-total-count']) : response.data.length;
 
@@ -28,10 +30,11 @@ export const fetchProducts = createAsyncThunk( // <-- Asegúrate de este 'export
 );
 
 // Acción asíncrona para actualizar el stock (exportación directa)
-export const updateProductStock = createAsyncThunk( // <-- Asegúrate de este 'export'
+export const updateProductStock = createAsyncThunk(
   'products/updateProductStock',
   async ({ productId, newStock }, thunkAPI) => {
     try {
+      // Usa la variable de entorno aquí
       const response = await axios.patch(`${API_BASE_URL}/products/${productId}/stock`, {
         id: productId,
         newStock: newStock
