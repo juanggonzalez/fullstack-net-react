@@ -49,7 +49,7 @@ namespace EcommerceApi.Data
                 new Brand { Id = 3, Name = "FashionWear", Description = "Trendy clothing brand" }
             );
 
-            // Relaciones de tus entidades 
+            // Relaciones 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)

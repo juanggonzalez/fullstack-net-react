@@ -16,7 +16,6 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Configuraci�n de Servicios ---
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -71,7 +70,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        policy => policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173") // URL de tu frontend
+        policy => policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173") 
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials());
@@ -188,14 +187,14 @@ using (var scope = app.Services.CreateScope())
     {
         var products = new List<Product>
         {
-            new Product { Name = "Laptop Gamer XYZ", Description = "Potente laptop para juegos.", Price = 1200.00m, Stock = 10, CategoryId = 1, BrandId = 1 },
-            new Product { Name = "Monitor UltraWide 4K", Description = "Experiencia visual inmersiva.", Price = 450.00m, Stock = 25, CategoryId = 1, BrandId = 1 },
-            new Product { Name = "Teclado Mec�nico RGB", Description = "Teclado de alto rendimiento.", Price = 90.00m, Stock = 50, CategoryId = 1, BrandId = 1 },
-            new Product { Name = "Mouse Gaming Pro", Description = "Rat�n ergon�mico alta precisi�n.", Price = 55.00m, Stock = 75, CategoryId = 1, BrandId = 1 },
-            new Product { Name = "El Se�or de los Anillos", Description = "Novela �pica de fantas�a.", Price = 25.00m, Stock = 100, CategoryId = 2, BrandId = 2 },
-            new Product { Name = "1984", Description = "Novela dist�pica de George Orwell.", Price = 15.00m, Stock = 80, CategoryId = 2, BrandId = 2 },
-            new Product { Name = "Camiseta Algod�n Premium", Description = "Camiseta suave y c�moda.", Price = 30.00m, Stock = 200, CategoryId = 3, BrandId = 3 },
-            new Product { Name = "Jeans Slim Fit", Description = "Jeans ajustados de moda.", Price = 60.00m, Stock = 150, CategoryId = 3, BrandId = 3 }
+            new Product { Name = "Laptop Gamer XYZ", Description = "Potente laptop para juegos.", Price = 1200.00m, Stock = 10, CategoryId = 1, BrandId = 1, ImageUrl="/images/laptop-gamer.jpg" },
+            new Product { Name = "Monitor UltraWide 4K", Description = "Experiencia visual inmersiva.", Price = 450.00m, Stock = 25, CategoryId = 1, BrandId = 1, ImageUrl="/images/monitor-wide.jpg" },
+            new Product { Name = "Teclado Mecánico RGB", Description = "Teclado de alto rendimiento.", Price = 90.00m, Stock = 50, CategoryId = 1, BrandId = 1, ImageUrl="/images/teclado-mecanico.jpg" },
+            new Product { Name = "Mouse Gaming Pro", Description = "Rat�n ergon�mico alta precisi�n.", Price = 55.00m, Stock = 75, CategoryId = 1, BrandId = 1, ImageUrl="/images/mouse-gamer.jpg" },
+            new Product { Name = "El Señor de los Anillos", Description = "Novela úpica de fantasía.", Price = 25.00m, Stock = 100, CategoryId = 2, BrandId = 2, ImageUrl="/images/libro-elderring.jpg" },
+            new Product { Name = "1984", Description = "Novela dist�pica de George Orwell.", Price = 15.00m, Stock = 80, CategoryId = 2, BrandId = 2, ImageUrl="/images/libro-novela.jpg" },
+            new Product { Name = "Camiseta Algodón Premium", Description = "Camiseta suave y c�moda.", Price = 30.00m, Stock = 200, CategoryId = 3, BrandId = 3, ImageUrl="/images/camiseta-algodon.jpg" },
+            new Product { Name = "Jeans Slim Fit", Description = "Jeans ajustados de moda.", Price = 60.00m, Stock = 150, CategoryId = 3, BrandId = 3, ImageUrl="/images/jeans.jpg" }
         };
         dbContext.Products.AddRange(products);
         await dbContext.SaveChangesAsync(); 

@@ -81,40 +81,81 @@ function ProductList({ globalSearchQuery }) {
       );
     } else {
       content = (
-        <Grid container spacing={3}>
+        <Grid container spacing={3}flex justifyContent="center">
           {products.map((product) => (
-            <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardMedia
-                  component="img"
-                  sx={{ aspectRatio: '1/1', objectFit: 'contain', maxHeight: 200, padding: 2 }}
-                  image={product.imageUrl || 'https://via.placeholder.com/150?text=No+Image'}
-                  alt={product.name}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h6" component="div">
+            <Grid item key={product.id} xs={12} sm={6} md={4} lg={3} > 
+              <Card sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: 3,
+                transition: 'transform 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                },
+                
+              }}>
+                <Box sx={{
+                  width: '100%',
+                  height: 180, 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  p: 0.5 
+                }}>
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'contain', 
+                      borderRadius: 2
+                    }}
+                    image={product.imageUrl}
+                    alt={product.name}
+                  />
+                </Box>
+                <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 1.5 }}>
+                  <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '1rem', mb: 0.5, lineHeight: '1.2' }}>
                     {product.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ minHeight: 40, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {product.description?.substring(0, 70) + (product.description && product.description.length > 70 ? '...' : '') || 'No description available.'}
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      minHeight: 30,
+                      maxHeight: 45, 
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      mb: 0.5
+                    }}
+                  >
+                    {product.description || 'No description available.'}
                   </Typography>
-                  <Typography variant="h6" color="primary.main" sx={{ mt: 1 }}>
-                    ${product.price.toFixed(2)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Stock: {product.stock}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Categoría: {product.categoryName}
-                  </Typography>
-                  {product.brandName && (
-                    <Typography variant="body2" color="text.secondary">
-                      Marca: {product.brandName}
+                  <Box sx={{ mt: 'auto' }}>
+                    <Typography variant="h6" color="primary.main" sx={{ mt: 0.5, fontSize: '1rem' }}>
+                      ${product.price ? product.price.toFixed(2) : 'N/A'}
                     </Typography>
-                  )}
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                      Stock: {product.stock}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                      Categoría: {product.categoryName}
+                    </Typography>
+                    {product.brandName && (
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                        Marca: {product.brandName}
+                      </Typography>
+                    )}
+                  </Box>
                 </CardContent>
-                <Box sx={{ p: 2 }}>
-                  <Button variant="contained" color="primary" fullWidth>
+                <Box sx={{ p: 1.5 }}>
+                  <Button variant="contained" color="primary" fullWidth size="small">
                     Añadir al Carrito
                   </Button>
                 </Box>
@@ -135,7 +176,7 @@ function ProductList({ globalSearchQuery }) {
   const totalPages = Math.ceil(totalProducts / pageSize);
 
   return (
-    <Container maxWidth="lg" sx={{ flexGrow: 1, mb: 4, mt: 0 }}> 
+    <Container maxWidth="lg" sx={{ flexGrow: 1, mb: 4, mt: 0 }}>
       <Typography variant="h4" component="h2" gutterBottom align="center" sx={{ mb: 3, color: 'text.primary' }}>
         Explora Nuestros Productos
       </Typography>

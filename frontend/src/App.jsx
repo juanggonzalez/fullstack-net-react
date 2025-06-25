@@ -51,11 +51,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Rutas públicas (accesibles sin login) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Rutas protegidas - Requieren autenticación */}
         <Route element={<ProtectedRoute />}>
           <Route
             path="/"

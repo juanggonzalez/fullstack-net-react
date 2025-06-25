@@ -17,7 +17,6 @@ namespace EcommerceApi.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        // Propiedades de navegación para relaciones
         public ICollection<Address> Addresses { get; set; } = new List<Address>();
         public ICollection<Order> Orders { get; set; } = new List<Order>();
         public ShoppingCart? ShoppingCart { get; set; }

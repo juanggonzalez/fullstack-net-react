@@ -19,20 +19,26 @@ function ProductFilters({
     setPriceRange(newValue);
   };
 
+  function valuetext(value) {
+    return `$${value}`;
+  }
+
   return (
     <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
-      <Grid container spacing={2} alignItems="flex-end"> 
+      <Grid container spacing={2} justifyContent="center"> 
 
-        <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth variant="outlined"> 
-            <InputLabel>Categoría</InputLabel>
+        <Grid item xs={12} sm={6} md={3}>
+          <FormControl fullWidth variant="outlined" sx={{ minWidth: 160 }}> 
+            <InputLabel id="category-select-label" shrink={true}>Categoría</InputLabel>
             <Select
+              labelId="category-select-label"
+              id="category-select"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               label="Categoría"
             >
               <MenuItem value="">
-                <em>Todas</em>
+                Todas
               </MenuItem>
               {categories.map((cat) => (
                 <MenuItem key={cat.id} value={cat.id}>
@@ -43,16 +49,18 @@ function ProductFilters({
           </FormControl>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth variant="outlined"> 
-            <InputLabel>Marca</InputLabel>
+        <Grid item xs={12} sm={6} md={3}>
+          <FormControl fullWidth variant="outlined" sx={{ minWidth: 160 }}> 
+            <InputLabel id="brand-select-label" shrink={true}>Marca</InputLabel>
             <Select
+              labelId="brand-select-label"
+              id="brand-select"
               value={brandId}
               onChange={(e) => setBrandId(e.target.value)}
               label="Marca"
             >
               <MenuItem value="">
-                <em>Todas</em>
+                Todas
               </MenuItem>
               {brands.map((brand) => (
                 <MenuItem key={brand.id} value={brand.id}>
@@ -64,34 +72,38 @@ function ProductFilters({
         </Grid>
 
         <Grid item xs={12} sm={12} md={4}>
-          <Box sx={{ px: 1 }}>
-            <Typography gutterBottom variant="subtitle2" color="text.secondary">Rango de Precio: ${priceRange[0]} - ${priceRange[1]}{priceRange[1] === 1000 ? '+' : ''}</Typography>
+          <Box sx={{ px: 2, pb: 1, pt: 0.5 }}>
+            <Typography gutterBottom variant="subtitle2" color="text.secondary">
+              Rango de Precio: ${priceRange[0]} - ${priceRange[1]}{priceRange[1] === 1000 ? '+' : ''}
+            </Typography>
             <Slider
               value={priceRange}
               onChangeCommitted={handlePriceRangeChange}
               valueLabelDisplay="auto"
+              getAriaValueText={valuetext}
               min={0}
               max={1000}
               step={10}
               marks={[
                 { value: 0, label: '$0' },
-                { value: 1000, label: '$1000+' }
+                { value: 1000, label: '$500+' }
               ]}
-              sx={{ width: '95%', ml: '2.5%' }}
             />
           </Box>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={2}>
-          <FormControl fullWidth variant="outlined"> 
-            <InputLabel>Ordenar por</InputLabel>
+        <Grid item xs={12} sm={6} md={3}>
+          <FormControl fullWidth variant="outlined" sx={{ minWidth: 160 }}> 
+            <InputLabel id="sort-by-select-label" shrink={true}>Ordenar por</InputLabel>
             <Select
+              labelId="sort-by-select-label"
+              id="sort-by-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               label="Ordenar por"
             >
               <MenuItem value="">
-                <em>Relevancia</em>
+                Relevancia
               </MenuItem>
               <MenuItem value="priceAsc">Precio: Más bajo primero</MenuItem>
               <MenuItem value="priceDesc">Precio: Más alto primero</MenuItem>
@@ -100,14 +112,14 @@ function ProductFilters({
             </Select>
           </FormControl>
         </Grid>
-
-        <Grid item xs={12} sm={6} md={2} sx={{ display: 'flex', justifyContent: 'flex-end', pt: { xs: 2, md: 0 } }}>
+        <Grid item xs={12} sm={6} md={12} sx={{ display: 'flex', justifyContent: 'flex-end', pt: { xs: 2, md: 0 } }}>
           <Button
             variant="outlined"
             color="secondary"
             startIcon={<ClearIcon />}
             onClick={onClearFilters}
-            sx={{ width: { xs: '100%', sm: 'auto' }, height: '56px' }} 
+            fullWidth
+            sx={{ height: '56px' }}
           >
             Limpiar Filtros
           </Button>
