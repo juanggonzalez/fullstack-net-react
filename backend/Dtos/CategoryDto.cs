@@ -1,4 +1,4 @@
-﻿namespace EcommerceApi.Dtos
+﻿namespace FullstackNetReact.Dtos
 {
     public class CategoryDto
     {

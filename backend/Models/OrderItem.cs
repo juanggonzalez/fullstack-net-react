@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EcommerceApi.Models
+namespace FullstackNetReact.Models
 {
     public class OrderItem
     {

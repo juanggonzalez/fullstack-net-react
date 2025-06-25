@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceApi.Models
+namespace FullstackNetReact.Models
 {
     public class Category
     {

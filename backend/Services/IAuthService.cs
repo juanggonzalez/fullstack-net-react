@@ -1,8 +1,7 @@
-﻿using EcommerceApi.Dtos; 
-using EcommerceApi.Models;
-using fullstack_net_react.Dtos; 
+﻿using FullstackNetReact.Models;
+using FullstackNetReact.Dtos;
 
-namespace EcommerceApi.Services
+namespace FullstackNetReact.Services
 {
     public interface IAuthService
     {

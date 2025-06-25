@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace fullstack_net_react.Migrations
+namespace FullstackNetReact.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetupWithIdentity : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,6 +56,20 @@ namespace fullstack_net_react.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Sellers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ContactInfo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sellers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -86,40 +100,6 @@ namespace fullstack_net_react.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Sku = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Stock = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    BrandId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Products_Brands_BrandId",
-                        column: x => x.BrandId,
-                        principalTable: "Brands",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Products_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RoleClaims",
                 columns: table => new
                 {
@@ -138,6 +118,44 @@ namespace fullstack_net_react.Migrations
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Sku = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Stock = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: true),
+                    SellerId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_Sellers_SellerId",
+                        column: x => x.SellerId,
+                        principalTable: "Sellers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -271,6 +289,49 @@ namespace fullstack_net_react.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProductFeatures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    FeatureText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductFeatures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductFeatures_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    ReviewDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -398,6 +459,56 @@ namespace fullstack_net_react.Migrations
                     { 4, "Appliances and decor", "Home & Kitchen" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "Sellers",
+                columns: new[] { "Id", "ContactInfo", "Name" },
+                values: new object[,]
+                {
+                    { 1, "ventas@electronicshub.com", "Electronics Hub" },
+                    { 2, "info@literarynook.com", "Literary Nook" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "BrandId", "CategoryId", "Description", "ImageUrl", "Name", "Price", "SellerId", "Sku", "Stock" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, "Potente laptop para juegos de alto rendimiento.", "/images/laptop-gamer.jpg", "Laptop Gamer Xtreme", 1200.00m, 1, "LX-001", 10 },
+                    { 2, 1, 1, "Experiencia visual inmersiva con colores vibrantes.", "/images/monitor-wide.jpg", "Monitor UltraWide 4K", 450.00m, 1, "MUW-002", 25 },
+                    { 3, 1, 1, "Teclado de alto rendimiento con iluminación personalizable.", "/images/teclado-mecanico.jpg", "Teclado Mecánico RGB", 90.00m, 1, "TMR-003", 50 },
+                    { 4, 1, 1, "Ratón ergonómico con alta precisión para gamers.", "/images/mouse-gamer.jpg", "Mouse Gaming Pro", 55.00m, 1, "MGP-004", 75 },
+                    { 5, 2, 2, "Novela épica de fantasía de J.R.R. Tolkien.", "/images/libro-elderring.jpg", "El Señor de los Anillos", 25.00m, 2, "LSA-005", 100 },
+                    { 6, 2, 2, "Novela distópica de George Orwell.", "/images/libro-novela.jpg", "1984", 15.00m, 2, "L1984-006", 80 },
+                    { 7, 3, 3, "Camiseta suave y cómoda, ideal para uso diario.", "/images/camiseta.jpg", "Camiseta Algodón Premium", 30.00m, 1, "CAP-007", 200 },
+                    { 8, 3, 3, "Jeans ajustados con diseño moderno.", "/images/jeans.jpg", "Jeans Slim Fit", 60.00m, 1, "JSF-008", 150 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ProductFeatures",
+                columns: new[] { "Id", "FeatureText", "ProductId" },
+                values: new object[,]
+                {
+                    { 1, "Procesador Intel Core i9 de última generación", 1 },
+                    { 2, "Tarjeta gráfica NVIDIA GeForce RTX 4080", 1 },
+                    { 3, "32GB de RAM DDR5", 1 },
+                    { 4, "Pantalla OLED de 34 pulgadas", 2 },
+                    { 5, "Resolución 3840 x 1600", 2 },
+                    { 6, "Edición de lujo con tapa dura", 5 },
+                    { 7, "Incluye mapas detallados de la Tierra Media", 5 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Reviews",
+                columns: new[] { "Id", "Comment", "ProductId", "Rating", "ReviewDate", "UserName" },
+                values: new object[,]
+                {
+                    { 1, "¡Una bestia para los juegos! Súper rápida y no se calienta.", 1, 5, new DateTime(2024, 6, 1, 10, 0, 0, 0, DateTimeKind.Utc), "Juan P." },
+                    { 2, "Buena laptop, aunque la batería podría durar un poco más.", 1, 4, new DateTime(2024, 6, 5, 14, 30, 0, 0, DateTimeKind.Utc), "Maria L." },
+                    { 3, "Calidad de imagen espectacular, ideal para diseño gráfico.", 2, 5, new DateTime(2024, 5, 20, 9, 0, 0, 0, DateTimeKind.Utc), "Carlos M." },
+                    { 4, "Lectura obligatoria para amantes de la fantasía. La edición es hermosa.", 5, 5, new DateTime(2024, 6, 10, 11, 0, 0, 0, DateTimeKind.Utc), "Laura D." },
+                    { 5, "Me encantó la historia, pero el tamaño de la letra es un poco pequeño.", 5, 4, new DateTime(2024, 6, 12, 16, 0, 0, 0, DateTimeKind.Utc), "Diego S." }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_UserId",
                 table: "Addresses",
@@ -434,6 +545,11 @@ namespace fullstack_net_react.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductFeatures_ProductId",
+                table: "ProductFeatures",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_BrandId",
                 table: "Products",
                 column: "BrandId");
@@ -442,6 +558,16 @@ namespace fullstack_net_react.Migrations
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_SellerId",
+                table: "Products",
+                column: "SellerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_ProductId",
+                table: "Reviews",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -505,6 +631,12 @@ namespace fullstack_net_react.Migrations
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
+                name: "ProductFeatures");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
+
+            migrationBuilder.DropTable(
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
@@ -542,6 +674,9 @@ namespace fullstack_net_react.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Sellers");
 
             migrationBuilder.DropTable(
                 name: "Users");

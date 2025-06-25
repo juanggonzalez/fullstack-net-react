@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceApi.Dtos
+namespace FullstackNetReact.Dtos
 {
     public class ProductStockUpdateDto
     {
@@ -9,6 +9,6 @@ namespace EcommerceApi.Dtos
 
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Stock must be non-negative")]
-        public int NewStock { get; set; }
+        public int Stock { get; set; }
     }
 }

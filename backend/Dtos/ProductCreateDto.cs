@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceApi.Dtos
+namespace FullstackNetReact.Dtos
 {
     public class ProductCreateDto
     {

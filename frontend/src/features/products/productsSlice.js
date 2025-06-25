@@ -1,3 +1,4 @@
+// productsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api'; 
 
@@ -26,11 +27,22 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductById = createAsyncThunk(
+  'products/fetchProductById',
+  async (productId, thunkAPI) => {
+    try {
+      const response = await api.get(`/products/${productId}`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 export const updateProductStock = createAsyncThunk(
   'products/updateProductStock',
   async ({ productId, newStock }, thunkAPI) => {
     try {
-      
       const response = await api.patch(`/products/${productId}/stock`, {
         id: productId, 
         newStock: newStock
@@ -50,6 +62,9 @@ const productsSlice = createSlice({
     totalCount: 0,
     status: 'idle', 
     error: null,
+    currentProduct: null, // Nuevo estado para el producto individual
+    currentProductStatus: 'idle', // Estado de carga para el producto individual
+    currentProductError: null, // Errores para el producto individual
   },
   reducers: {
     
@@ -74,12 +89,22 @@ const productsSlice = createSlice({
         if (existingProductIndex !== -1) {
           state.items[existingProductIndex] = updatedProduct;
         }
-        
       })
-      .addCase(updateProductStock.rejected, (state, action) => {
-        console.error("Failed to update stock:", action.payload);
+      // Nuevos casos para fetchProductById
+      .addCase(fetchProductById.pending, (state) => {
+        state.currentProductStatus = 'loading';
+        state.currentProductError = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.currentProductStatus = 'succeeded';
+        state.currentProduct = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.currentProductStatus = 'failed';
+        state.currentProductError = action.payload;
+        state.currentProduct = null;
       });
-  },
+  }
 });
 
 export default productsSlice.reducer;

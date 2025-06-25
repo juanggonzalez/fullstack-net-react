@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using EcommerceApi.Dtos; 
-using EcommerceApi.Services;
-using EcommerceApi.Models; 
+using FullstackNetReact.Dtos; 
+using FullstackNetReact.Services;
+using FullstackNetReact.Models; 
 
-namespace EcommerceApi.Controllers
+namespace FullstackNetReact.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

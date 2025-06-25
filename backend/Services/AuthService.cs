@@ -3,11 +3,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims; 
 using System.Text; 
 using Microsoft.IdentityModel.Tokens; 
-using EcommerceApi.Dtos;
-using EcommerceApi.Models;
-using fullstack_net_react.Dtos; 
+using FullstackNetReact.Dtos;
+using FullstackNetReact.Models;
 
-namespace EcommerceApi.Services
+namespace FullstackNetReact.Services
 {
     public class AuthService : IAuthService
     {

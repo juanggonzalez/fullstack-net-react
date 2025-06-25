@@ -1,4 +1,4 @@
-﻿namespace fullstack_net_react.Dtos
+﻿namespace FullstackNetReact.Dtos
 {
     public class UserDto
     {

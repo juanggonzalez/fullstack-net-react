@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '../features/products/productsSlice';
-
+import ProductDetail from './ProductDetail'; // Importa el componente ProductDetail
 import ProductFilters from './ProductFilters';
 
 import {
   Container, Grid, Card, CardContent, CardMedia, Typography,
-  Button, CircularProgress, Box, Pagination, FormControl, Select, MenuItem
+  Button, CircularProgress, Box, Pagination, FormControl, Select, MenuItem, Drawer,
+  IconButton
 } from '@mui/material';
+
+import FilterListIcon from '@mui/icons-material/FilterList'
+import CloseIcon from '@mui/icons-material/Close'; // Icono de cerrar
 
 function ProductList({ globalSearchQuery }) {
   const dispatch = useDispatch();
@@ -20,9 +24,11 @@ function ProductList({ globalSearchQuery }) {
   const [brandId, setBrandId] = useState('');
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [sortBy, setSortBy] = useState('');
-
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const categories = [
     { id: 1, name: 'Electronics' },
@@ -47,7 +53,9 @@ function ProductList({ globalSearchQuery }) {
       pageSize,
       sortBy
     }));
-
+    if (mobileFiltersOpen) {
+      setMobileFiltersOpen(false);
+    }
   }, [dispatch, globalSearchQuery, categoryId, brandId, priceRange, currentPage, pageSize, sortBy]);
 
 
@@ -62,6 +70,20 @@ function ProductList({ globalSearchQuery }) {
     setPriceRange([0, 1000]);
     setSortBy('');
     setCurrentPage(1);
+  };
+
+  const handleOpenDetailModal = (productId) => {
+    setSelectedProductId(productId);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setSelectedProductId(null);
+    setIsDetailModalOpen(false);
+  };
+
+  const toggleMobileFilters = () => {
+    setMobileFiltersOpen(!mobileFiltersOpen);
   };
 
   let content;
@@ -81,9 +103,9 @@ function ProductList({ globalSearchQuery }) {
       );
     } else {
       content = (
-        <Grid container spacing={3}flex justifyContent="center">
+        <Grid container spacing={3} flex justifyContent="center">
           {products.map((product) => (
-            <Grid item key={product.id} xs={12} sm={6} md={4} lg={3} > 
+            <Grid item key={product.id} xs={12} sm={6} md={4} lg={3} >
               <Card sx={{
                 height: '100%',
                 display: 'flex',
@@ -91,26 +113,29 @@ function ProductList({ globalSearchQuery }) {
                 justifyContent: 'space-between',
                 boxShadow: 3,
                 transition: 'transform 0.2s ease-in-out',
+                cursor: 'pointer', // Añade cursor de puntero para indicar que es clickeable
                 '&:hover': {
                   transform: 'translateY(-5px)',
+                  boxShadow: 6, // Un poco más de sombra al pasar el ratón
                 },
-                
-              }}>
+
+              }}
+                onClick={() => handleOpenDetailModal(product.id)}>
                 <Box sx={{
                   width: '100%',
-                  height: 180, 
+                  height: 180,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   overflow: 'hidden',
-                  p: 0.5 
+                  p: 0.5
                 }}>
                   <CardMedia
                     component="img"
                     sx={{
-                      width: '100%', 
-                      height: '100%', 
-                      objectFit: 'contain', 
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
                       borderRadius: 2
                     }}
                     image={product.imageUrl}
@@ -126,7 +151,8 @@ function ProductList({ globalSearchQuery }) {
                     color="text.secondary"
                     sx={{
                       minHeight: 30,
-                      maxHeight: 45, 
+                      maxHeight: 45,
+                      maxWidth: 200,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       display: '-webkit-box',
@@ -181,16 +207,66 @@ function ProductList({ globalSearchQuery }) {
         Explora Nuestros Productos
       </Typography>
 
-      <ProductFilters
-        categoryId={categoryId} setCategoryId={handleCategoryChange}
-        brandId={brandId} setBrandId={handleBrandChange}
-        priceRange={priceRange} setPriceRange={handlePriceRangeChange}
-        sortBy={sortBy} setSortBy={handleSortByChange}
-        onClearFilters={handleClearAllFilters}
-        categories={categories}
-        brands={brands}
-      />
-
+      <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}> {/* Ocultar en xs y sm, mostrar en md y superior */}
+        <ProductFilters
+          categoryId={categoryId} setCategoryId={handleCategoryChange}
+          brandId={brandId} setBrandId={handleBrandChange}
+          priceRange={priceRange} setPriceRange={handlePriceRangeChange}
+          sortBy={sortBy} setSortBy={handleSortByChange}
+          onClearFilters={handleClearAllFilters}
+          categories={categories}
+          brands={brands}
+        />
+      </Box>
+      <Box sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}> {/* Mostrar en xs y sm, ocultar en md y superior */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <Button
+            variant="contained"
+            startIcon={<FilterListIcon />}
+            onClick={toggleMobileFilters}
+            sx={{ width: '100%', py: 1.5 }} // Hace que el botón ocupe todo el ancho en mobile
+          >
+            Filtros
+          </Button>
+        </Box>
+      </Box>
+      <Drawer
+        anchor="right" // El cajón se abre desde la derecha
+        open={mobileFiltersOpen}
+        onClose={toggleMobileFilters}
+        sx={{
+          '& .MuiDrawer-paper': { width: '80%', maxWidth: 350, boxSizing: 'border-box', p: 2 }, // Ancho del drawer
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6">Filtros de Productos</Typography>
+          <IconButton onClick={toggleMobileFilters}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        {/* Los filtros se renderizan dentro del Drawer */}
+        <ProductFilters
+          categoryId={categoryId} setCategoryId={handleCategoryChange}
+          brandId={brandId} setBrandId={handleBrandChange}
+          priceRange={priceRange} setPriceRange={handlePriceRangeChange}
+          sortBy={sortBy} setSortBy={handleSortByChange}
+          onClearFilters={() => { handleClearAllFilters(); toggleMobileFilters(); }} // Limpiar y cerrar
+          categories={categories}
+          brands={brands}
+          // Propiedad para indicar que los filtros están en modo mobile (opcional)
+          isMobileView={true}
+        />
+        <Box sx={{ mt: 3 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={toggleMobileFilters} // Aplicar y cerrar
+          >
+            Aplicar Filtros
+          </Button>
+        </Box>
+      </Drawer>
       {content}
 
       {totalPages > 1 && (
@@ -216,6 +292,11 @@ function ProductList({ globalSearchQuery }) {
           </FormControl>
         </Box>
       )}
+      <ProductDetail
+        productId={selectedProductId}
+        open={isDetailModalOpen}
+        onClose={handleCloseDetailModal}
+      />
     </Container>
   );
 }

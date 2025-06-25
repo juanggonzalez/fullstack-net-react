@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using EcommerceApi.Data;
-using EcommerceApi.Dtos;
-using EcommerceApi.Models;
+using FullstackNetReact.Data;
+using FullstackNetReact.Dtos;
+using FullstackNetReact.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace EcommerceApi.Services
+namespace FullstackNetReact.Services
 {
     public class ProductService : IProductService
     {
@@ -24,7 +21,7 @@ namespace EcommerceApi.Services
         {
             var products = await _context.Products
                                         .Include(p => p.Category)
-                                        .Include(p => p.Brand) 
+                                        .Include(p => p.Brand)
                                         .ToListAsync();
             return _mapper.Map<IEnumerable<ProductDto>>(products);
         }
@@ -38,12 +35,37 @@ namespace EcommerceApi.Services
             return _mapper.Map<ProductDto>(product);
         }
 
+        // MODIFICADO: GetProductDetailByIdAsync para usar la DB
+        public async Task<ProductDetailDto?> GetProductDetailByIdAsync(int id)
+        {
+            var product = await _context.Products
+                                        .Include(p => p.Category)
+                                        .Include(p => p.Brand)
+                                        .Include(p => p.Seller) // Incluir el vendedor
+                                        .Include(p => p.Reviews) // Incluir las reseñas
+                                        .Include(p => p.Features) // Incluir las características
+                                        .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null)
+            {
+                return null;
+            }
+
+            var productDetailDto = _mapper.Map<ProductDetailDto>(product);
+
+            // Mapeo manual de las características (ya que ProductDetailDto espera List<string>)
+            productDetailDto.Features = product.Features.Select(f => f.FeatureText).ToList();
+
+            // Calcular promedio de rating y total de reseñas
+            productDetailDto.TotalReviews = product.Reviews.Count;
+            productDetailDto.AverageRating = product.Reviews.Any() ? Math.Round(product.Reviews.Average(r => r.Rating), 1) : 0;
+
+            return productDetailDto;
+        }
+
         public async Task<ProductDto> CreateProductAsync(ProductCreateDto productDto)
         {
             var product = _mapper.Map<Product>(productDto);
-            product.CreatedAt = DateTime.UtcNow;
-            product.UpdatedAt = DateTime.UtcNow;
-
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
             return _mapper.Map<ProductDto>(product);
@@ -54,26 +76,10 @@ namespace EcommerceApi.Services
             var product = await _context.Products.FindAsync(productDto.Id);
             if (product == null) return false;
 
-            _mapper.Map(productDto, product); 
-            product.UpdatedAt = DateTime.UtcNow; 
-
-            _context.Entry(product).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _context.Products.AnyAsync(e => e.Id == productDto.Id))
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _mapper.Map(productDto, product);
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> DeleteProductAsync(int id)
@@ -91,39 +97,17 @@ namespace EcommerceApi.Services
             var product = await _context.Products.FindAsync(stockDto.Id);
             if (product == null) return false;
 
-            product.Stock = stockDto.NewStock;
-            product.UpdatedAt = DateTime.UtcNow;
-
-            _context.Entry(product).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _context.Products.AnyAsync(e => e.Id == stockDto.Id))
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            product.Stock = stockDto.Stock;
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<IEnumerable<ProductDto>> GetFilteredProductsAsync(
-            string? search = null,
-            int? categoryId = null,
-            int? brandId = null,
-            decimal? minPrice = null,
-            decimal? maxPrice = null,
-            int pageNumber = 1,
-            int pageSize = 10,
-            string? sortBy = null,
-            bool includeCategory = false,
-            bool includeBrand = false
+            string? search = null, int? categoryId = null, int? brandId = null,
+            decimal? minPrice = null, decimal? maxPrice = null,
+            int pageNumber = 1, int pageSize = 10, string? sortBy = null,
+            bool includeCategory = false, bool includeBrand = false
         )
         {
             IQueryable<Product> query = _context.Products;
@@ -162,13 +146,13 @@ namespace EcommerceApi.Services
                 query = query.Where(p => p.Price <= maxPrice.Value);
             }
 
-            query = sortBy?.ToLower() switch
+            query = sortBy?.ToLowerInvariant() switch
             {
                 "priceasc" => query.OrderBy(p => p.Price),
                 "pricedesc" => query.OrderByDescending(p => p.Price),
                 "nameasc" => query.OrderBy(p => p.Name),
                 "namedesc" => query.OrderByDescending(p => p.Name),
-                _ => query.OrderBy(p => p.Id) 
+                _ => query.OrderBy(p => p.Id)
             };
 
             query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
