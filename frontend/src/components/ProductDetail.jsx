@@ -1,7 +1,6 @@
-// src/components/ProductDetail.jsx
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux'; // Importar useSelector y useDispatch
-import { fetchProductById } from '../features/products/productsSlice'; // Importar la nueva acción
+import { useSelector, useDispatch } from 'react-redux'; 
+import { fetchProductById } from '../features/products/productsSlice'; 
 
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '../features/products/productsSlice';
-import ProductDetail from './ProductDetail'; // Importa el componente ProductDetail
+import ProductDetail from './ProductDetail'; 
 import ProductFilters from './ProductFilters';
 
 import {
@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 import FilterListIcon from '@mui/icons-material/FilterList'
-import CloseIcon from '@mui/icons-material/Close'; // Icono de cerrar
+import CloseIcon from '@mui/icons-material/Close'; 
 
 function ProductList({ globalSearchQuery }) {
   const dispatch = useDispatch();
@@ -113,10 +113,10 @@ function ProductList({ globalSearchQuery }) {
                 justifyContent: 'space-between',
                 boxShadow: 3,
                 transition: 'transform 0.2s ease-in-out',
-                cursor: 'pointer', // Añade cursor de puntero para indicar que es clickeable
+                cursor: 'pointer', 
                 '&:hover': {
                   transform: 'translateY(-5px)',
-                  boxShadow: 6, // Un poco más de sombra al pasar el ratón
+                  boxShadow: 6, 
                 },
 
               }}
@@ -207,7 +207,7 @@ function ProductList({ globalSearchQuery }) {
         Explora Nuestros Productos
       </Typography>
 
-      <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}> {/* Ocultar en xs y sm, mostrar en md y superior */}
+      <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}> 
         <ProductFilters
           categoryId={categoryId} setCategoryId={handleCategoryChange}
           brandId={brandId} setBrandId={handleBrandChange}
@@ -218,24 +218,24 @@ function ProductList({ globalSearchQuery }) {
           brands={brands}
         />
       </Box>
-      <Box sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}> {/* Mostrar en xs y sm, ocultar en md y superior */}
+      <Box sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}> 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
           <Button
             variant="contained"
             startIcon={<FilterListIcon />}
             onClick={toggleMobileFilters}
-            sx={{ width: '100%', py: 1.5 }} // Hace que el botón ocupe todo el ancho en mobile
+            sx={{ width: '100%', py: 1.5 }} 
           >
             Filtros
           </Button>
         </Box>
       </Box>
       <Drawer
-        anchor="right" // El cajón se abre desde la derecha
+        anchor="right" 
         open={mobileFiltersOpen}
         onClose={toggleMobileFilters}
         sx={{
-          '& .MuiDrawer-paper': { width: '80%', maxWidth: 350, boxSizing: 'border-box', p: 2 }, // Ancho del drawer
+          '& .MuiDrawer-paper': { width: '80%', maxWidth: 350, boxSizing: 'border-box', p: 2 }, 
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -244,16 +244,14 @@ function ProductList({ globalSearchQuery }) {
             <CloseIcon />
           </IconButton>
         </Box>
-        {/* Los filtros se renderizan dentro del Drawer */}
         <ProductFilters
           categoryId={categoryId} setCategoryId={handleCategoryChange}
           brandId={brandId} setBrandId={handleBrandChange}
           priceRange={priceRange} setPriceRange={handlePriceRangeChange}
           sortBy={sortBy} setSortBy={handleSortByChange}
-          onClearFilters={() => { handleClearAllFilters(); toggleMobileFilters(); }} // Limpiar y cerrar
+          onClearFilters={() => { handleClearAllFilters(); toggleMobileFilters(); }} 
           categories={categories}
           brands={brands}
-          // Propiedad para indicar que los filtros están en modo mobile (opcional)
           isMobileView={true}
         />
         <Box sx={{ mt: 3 }}>
@@ -261,7 +259,7 @@ function ProductList({ globalSearchQuery }) {
             variant="contained"
             color="primary"
             fullWidth
-            onClick={toggleMobileFilters} // Aplicar y cerrar
+            onClick={toggleMobileFilters} 
           >
             Aplicar Filtros
           </Button>

@@ -35,15 +35,14 @@ namespace FullstackNetReact.Services
             return _mapper.Map<ProductDto>(product);
         }
 
-        // MODIFICADO: GetProductDetailByIdAsync para usar la DB
         public async Task<ProductDetailDto?> GetProductDetailByIdAsync(int id)
         {
             var product = await _context.Products
                                         .Include(p => p.Category)
                                         .Include(p => p.Brand)
-                                        .Include(p => p.Seller) // Incluir el vendedor
-                                        .Include(p => p.Reviews) // Incluir las reseñas
-                                        .Include(p => p.Features) // Incluir las características
+                                        .Include(p => p.Seller) 
+                                        .Include(p => p.Reviews) 
+                                        .Include(p => p.Features) 
                                         .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
@@ -53,7 +52,6 @@ namespace FullstackNetReact.Services
 
             var productDetailDto = _mapper.Map<ProductDetailDto>(product);
 
-            // Mapeo manual de las características (ya que ProductDetailDto espera List<string>)
             productDetailDto.Features = product.Features.Select(f => f.FeatureText).ToList();
 
             // Calcular promedio de rating y total de reseñas

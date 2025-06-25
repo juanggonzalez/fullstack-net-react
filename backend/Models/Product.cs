@@ -42,15 +42,13 @@ namespace FullstackNetReact.Models
         [ForeignKey("BrandId")]
         public Brand? Brand { get; set; }
 
-        // --- Propiedades para reseñas, características y vendedor ---
         public int? SellerId { get; set; } // Foreign key para Seller
         [ForeignKey("SellerId")]
-        public Seller? Seller { get; set; } // Propiedad de navegación
+        public Seller? Seller { get; set; } 
 
-        public ICollection<Review> Reviews { get; set; } = new List<Review>(); // Reseñas de este producto
-        public ICollection<ProductFeature> Features { get; set; } = new List<ProductFeature>(); // Características adicionales
+        public ICollection<Review> Reviews { get; set; } = new List<Review>(); 
+        public ICollection<ProductFeature> Features { get; set; } = new List<ProductFeature>(); 
 
-        // --- NUEVAS PROPIEDADES PARA RESOLVER LOS ERRORES ---
         public ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }

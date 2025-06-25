@@ -37,9 +37,13 @@ namespace FullstackNetReact.Profiles
             // Mapeo de Marca
             CreateMap<Brand, BrandDto>();
 
-            // NUEVOS Mapeos para los nuevos modelos/DTOs
+            // Mapeo de Review
             CreateMap<Review, ReviewDto>();
-            CreateMap<ProductFeature, ProductFeatureDto>(); // Aunque ProductDetailDto usa List<string>, es bueno tener el DTO
+
+            // Mapeo de Feature
+            CreateMap<ProductFeature, ProductFeatureDto>();
+
+            // Mapero de Vendedor
             CreateMap<Seller, SellerDto>();
         }
     }

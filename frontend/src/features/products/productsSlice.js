@@ -1,4 +1,3 @@
-// productsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api'; 
 
@@ -62,9 +61,9 @@ const productsSlice = createSlice({
     totalCount: 0,
     status: 'idle', 
     error: null,
-    currentProduct: null, // Nuevo estado para el producto individual
-    currentProductStatus: 'idle', // Estado de carga para el producto individual
-    currentProductError: null, // Errores para el producto individual
+    currentProduct: null, 
+    currentProductStatus: 'idle', 
+    currentProductError: null, 
   },
   reducers: {
     
@@ -90,7 +89,6 @@ const productsSlice = createSlice({
           state.items[existingProductIndex] = updatedProduct;
         }
       })
-      // Nuevos casos para fetchProductById
       .addCase(fetchProductById.pending, (state) => {
         state.currentProductStatus = 'loading';
         state.currentProductError = null;

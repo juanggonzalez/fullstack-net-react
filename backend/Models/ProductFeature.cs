@@ -11,7 +11,7 @@ namespace FullstackNetReact.Models
 
         public int ProductId { get; set; } // Foreign key to Product
         [ForeignKey("ProductId")]
-        public Product Product { get; set; } = null!; // Navigation property
+        public Product Product { get; set; } = null!; 
 
         [Required]
         [MaxLength(200)]

@@ -1,5 +1,4 @@
 ﻿// FullstackNetReact/Dtos/ReviewDto.cs
-// (No hay cambios en este archivo, se mantiene como en la respuesta anterior)
 
 using System;
 

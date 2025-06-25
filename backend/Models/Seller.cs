@@ -14,8 +14,8 @@ namespace FullstackNetReact.Models
         public string Name { get; set; } = string.Empty;
 
         [MaxLength(200)]
-        public string? ContactInfo { get; set; } // e.g., email, phone, website
+        public string? ContactInfo { get; set; } 
 
-        public ICollection<Product> Products { get; set; } = new List<Product>(); // Products sold by this seller
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

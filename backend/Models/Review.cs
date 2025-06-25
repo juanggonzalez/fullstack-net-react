@@ -12,18 +12,18 @@ namespace FullstackNetReact.Models
 
         public int ProductId { get; set; } // Foreign key to Product
         [ForeignKey("ProductId")]
-        public Product Product { get; set; } = null!; // Navigation property
+        public Product Product { get; set; } = null!; 
 
         [Required]
         [MaxLength(100)]
         public string UserName { get; set; } = string.Empty;
 
-        [Range(1, 5)] // Rating between 1 and 5 stars
+        [Range(1, 5)] 
         public int Rating { get; set; }
 
         [MaxLength(1000)]
         public string? Comment { get; set; }
 
-        public DateTime ReviewDate { get; set; } = DateTime.UtcNow; // Store in UTC
+        public DateTime ReviewDate { get; set; } = DateTime.UtcNow; 
     }
 }
