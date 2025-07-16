@@ -24,6 +24,7 @@ namespace FullstackNetReact.Data
         public DbSet<ProductFeature> ProductFeatures { get; set; } = default!;
         public DbSet<Seller> Sellers { get; set; } = default!;
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -66,7 +67,7 @@ namespace FullstackNetReact.Data
                 new Product { Id = 4, Name = "Mouse Gaming Pro", Description = "Ratón ergonómico con alta precisión para gamers.", Sku = "MGP-004", Price = 55.00m, Stock = 75, CategoryId = 1, BrandId = 1, ImageUrl = "/images/mouse-gamer.jpg", SellerId = 1 },
                 new Product { Id = 5, Name = "El Señor de los Anillos", Description = "Novela épica de fantasía de J.R.R. Tolkien.", Sku = "LSA-005", Price = 25.00m, Stock = 100, CategoryId = 2, BrandId = 2, ImageUrl = "/images/libro-elderring.jpg", SellerId = 2 },
                 new Product { Id = 6, Name = "1984", Description = "Novela distópica de George Orwell.", Sku = "L1984-006", Price = 15.00m, Stock = 80, CategoryId = 2, BrandId = 2, ImageUrl = "/images/libro-novela.jpg", SellerId = 2 },
-                new Product { Id = 8, Name = "Jeans Slim Fit", Description = "Jeans ajustados con diseño moderno.", Sku = "JSF-008", Price = 60.00m, Stock = 150, CategoryId = 3, BrandId = 3, ImageUrl = "/images/jeans.jpg", SellerId = 1 } // Asignar a un Seller existente
+                new Product { Id = 8, Name = "Jeans Slim Fit", Description = "Jeans ajustados con diseño moderno.", Sku = "JSF-008", Price = 60.00m, Stock = 150, CategoryId = 3, BrandId = 3, ImageUrl = "/images/jeans.jpg", SellerId = 1 } 
             );
             
             // Seed Data para Reviews
@@ -110,24 +111,22 @@ namespace FullstackNetReact.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ShoppingCart>()
-                .HasKey(sc => sc.UserId);
-            modelBuilder.Entity<ShoppingCart>()
-                .HasOne(sc => sc.User)
-                .WithOne(u => u.ShoppingCart)
-                .HasForeignKey<ShoppingCart>(sc => sc.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ShoppingCartItem>()
-                .HasOne(sci => sci.ShoppingCart)
-                .WithMany(sc => sc.Items)
+                .HasMany(sc => sc.Items)
+                .WithOne(sci => sci.ShoppingCart)
                 .HasForeignKey(sci => sci.ShoppingCartId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<ShoppingCartItem>()
                 .HasOne(sci => sci.Product)
-                .WithMany(p => p.ShoppingCartItems)
+                .WithMany() 
                 .HasForeignKey(sci => sci.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<ShoppingCart>()
+                .HasOne(sc => sc.User)
+                .WithMany() 
+                .HasForeignKey(sc => sc.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)

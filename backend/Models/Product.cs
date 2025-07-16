@@ -1,7 +1,6 @@
-﻿// FullstackNetReact/Models/Product.cs
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic; // Para ICollection
+using System.Collections.Generic; 
 
 namespace FullstackNetReact.Models
 {
@@ -32,17 +31,15 @@ namespace FullstackNetReact.Models
         [Range(0, int.MaxValue)]
         public int Stock { get; set; }
 
-        // Foreign Key for Category
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         public Category Category { get; set; } = null!;
 
-        // Foreign Key for Brand (optional, can be null)
         public int? BrandId { get; set; }
         [ForeignKey("BrandId")]
         public Brand? Brand { get; set; }
 
-        public int? SellerId { get; set; } // Foreign key para Seller
+        public int? SellerId { get; set; } 
         [ForeignKey("SellerId")]
         public Seller? Seller { get; set; } 
 

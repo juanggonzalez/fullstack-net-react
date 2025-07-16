@@ -1,6 +1,4 @@
-﻿// FullstackNetReact/Dtos/ReviewDto.cs
-
-using System;
+﻿using System;
 
 namespace FullstackNetReact.Dtos
 {
@@ -8,7 +6,7 @@ namespace FullstackNetReact.Dtos
     {
         public int Id { get; set; }
         public string UserName { get; set; } = string.Empty;
-        public int Rating { get; set; } // 1 a 5 estrellas
+        public int Rating { get; set; } 
         public string Comment { get; set; } = string.Empty;
         public DateTime ReviewDate { get; set; }
     }

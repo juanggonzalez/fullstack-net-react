@@ -1,5 +1,4 @@
-﻿// FullstackNetReact/Dtos/SellerDto.cs
-namespace FullstackNetReact.Dtos
+﻿namespace FullstackNetReact.Dtos
 {
     public class SellerDto
     {

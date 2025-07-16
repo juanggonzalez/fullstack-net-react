@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'; 
 import { fetchProductById } from '../features/products/productsSlice'; 
 
@@ -16,7 +16,7 @@ const ImgStyled = styled('img')({
   borderRadius: '8px',
 });
 
-function ProductDetail({ productId, open, onClose }) {
+const ProductDetail = ({ productId, open, onClose }) => {
   const dispatch = useDispatch();
   const product = useSelector((state) => state.products.currentProduct);
   const loading = useSelector((state) => state.products.currentProductStatus === 'loading');
@@ -118,7 +118,6 @@ function ProductDetail({ productId, open, onClose }) {
               )}
             </Grid>
 
-            {/* Sección de Reseñas */}
             {product.reviews && product.reviews.length > 0 && (
               <Grid item xs={12}>
                 <Divider sx={{ my: 4 }} />

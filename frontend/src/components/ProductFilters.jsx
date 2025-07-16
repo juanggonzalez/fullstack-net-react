@@ -1,11 +1,10 @@
-import React from 'react';
 import {
   Grid, Button, Select, MenuItem, InputLabel, FormControl,
   Typography, Slider, Box, Paper
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 
-function ProductFilters({
+const ProductFilters = ({
   categoryId, setCategoryId,
   brandId, setBrandId,
   priceRange, setPriceRange,
@@ -13,7 +12,7 @@ function ProductFilters({
   onClearFilters,
   categories,
   brands
-}) {
+}) => {
 
   const handlePriceRangeChange = (event, newValue) => {
     setPriceRange(newValue);

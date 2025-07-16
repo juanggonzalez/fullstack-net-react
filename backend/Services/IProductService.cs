@@ -6,7 +6,7 @@ namespace FullstackNetReact.Services
     {
         Task<IEnumerable<ProductDto>> GetAllProductsAsync();
         Task<ProductDto?> GetProductByIdAsync(int id);
-        Task<ProductDetailDto?> GetProductDetailByIdAsync(int id); // Esta firma es la que usaremos
+        Task<ProductDetailDto?> GetProductDetailByIdAsync(int id); 
         Task<ProductDto> CreateProductAsync(ProductCreateDto productDto);
         Task<bool> UpdateProductAsync(ProductUpdateDto productDto);
         Task<bool> DeleteProductAsync(int id);

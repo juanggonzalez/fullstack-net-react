@@ -1,5 +1,4 @@
-﻿// fullstack-net-react/Models/ApplicationUser.cs
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace FullstackNetReact.Models

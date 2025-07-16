@@ -1,75 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../features/auth/authSlice';
-import { useNavigate } from 'react-router-dom';
 import {
   TextField,
   Button,
   Typography,
   Box,
-  Paper, 
-  Snackbar, 
-  Alert, 
-  Slide, 
-  useTheme, 
+  Paper,
+  useTheme,
 } from '@mui/material';
-import { motion } from 'framer-motion'; 
+import { motion } from 'framer-motion';
 
-function TransitionLeft(props) {
-  return <Slide {...props} direction="left" />;
-}
+import useAuthRedirect from '../../hooks/useAuthRedirect';
+import useLoginForm from '../../hooks/useLoginHook';
+import { useNavigate } from 'react-router-dom'; 
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const theme = useTheme(); 
+  const theme = useTheme();
+  const navigate = useNavigate(); 
 
-  const { status, error, isAuthenticated } = useSelector((state) => state.auth);
+  useAuthRedirect('/'); 
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info'); 
+  const {
+    register,
+    handleSubmit,
+    errors,
+    isSubmitting, 
+  } = useLoginForm();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      setSnackbarMessage('¡Inicio de sesión exitoso!');
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
-      setTimeout(() => {
-        navigate('/');
-      }, 1500); 
-    }
-  }, [isAuthenticated, navigate]);
-
-  useEffect(() => {
-    if (status === 'failed' && error) {
-      setSnackbarMessage(error.title || error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-    }
-  }, [status, error]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (username.trim() === '' || password.trim() === '') {
-        setSnackbarMessage('Por favor, ingresa tu nombre de usuario y contraseña.');
-        setSnackbarSeverity('warning');
-        setSnackbarOpen(true);
-        return;
-    }
-    dispatch(login({ username, password }));
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
-  const gradientBackground = `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.secondary.light} 100%)`;
+  const gradientBackground = theme.palette.gradients.primaryToSecondary;
 
   return (
     <Box
@@ -78,27 +34,27 @@ const Login = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: gradientBackground, 
-        p: 2, 
+        background: gradientBackground,
+        p: 2,
       }}
     >
       <motion.div
-        initial={{ opacity: 0, y: -50 }} 
-        animate={{ opacity: 1, y: 0 }}   
-        transition={{ duration: 0.5 }}   
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
       >
         <Paper
-          elevation={6} 
+          elevation={6}
           sx={{
-            p: 4, 
+            p: 4,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            maxWidth: '400px', 
+            maxWidth: '400px',
             width: '100%',
-            borderRadius: '12px', 
-            boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.2)', 
-            background: theme.palette.background.paper, 
+            borderRadius: '12px',
+            boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.2)',
+            background: theme.palette.background.paper,
           }}
         >
           <Typography component="h1" variant="h5" sx={{ mb: 2, color: theme.palette.primary.main }}>
@@ -114,9 +70,10 @@ const Login = () => {
               name="username"
               autoComplete="username"
               autoFocus
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              variant="outlined" 
+              variant="outlined"
+              {...register('username')}
+              error={!!errors.username}
+              helperText={errors.username?.message}
             />
             <TextField
               margin="normal"
@@ -127,42 +84,31 @@ const Login = () => {
               type="password"
               id="password"
               autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               variant="outlined"
+              {...register('password')}
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, py: 1.2, fontSize: '1.1rem' }} 
-              disabled={status === 'loading'} 
+              sx={{ mt: 3, mb: 2, py: 1.2, fontSize: '1.1rem' }}
+              disabled={isSubmitting} 
             >
-              {status === 'loading' ? 'Iniciando sesión...' : 'Login'}
+              {isSubmitting ? 'Iniciando sesión...' : 'Login'}
             </Button>
             <Button
               fullWidth
               variant="text"
               onClick={() => navigate('/register')}
-              sx={{ color: theme.palette.text.secondary }} 
+              sx={{ color: theme.palette.text.secondary }}
             >
               ¿No tienes cuenta? Regístrate
             </Button>
           </Box>
         </Paper>
       </motion.div>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000} 
-        onClose={handleSnackbarClose}
-        TransitionComponent={TransitionLeft} 
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from '../features/products/productsSlice';
-import ProductDetail from './ProductDetail'; 
+import { addItem } from '../features/cart/cartSlice'; 
+import ProductDetail from './ProductDetail';
 import ProductFilters from './ProductFilters';
 
 import {
   Container, Grid, Card, CardContent, CardMedia, Typography,
   Button, CircularProgress, Box, Pagination, FormControl, Select, MenuItem, Drawer,
-  IconButton
+  IconButton, Snackbar, Alert
 } from '@mui/material';
 
 import FilterListIcon from '@mui/icons-material/FilterList'
-import CloseIcon from '@mui/icons-material/Close'; 
+import CloseIcon from '@mui/icons-material/Close';
 
-function ProductList({ globalSearchQuery }) {
+const ProductList = ({ globalSearchQuery }) => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products.items);
   const productStatus = useSelector((state) => state.products.status);
   const error = useSelector((state) => state.products.error);
   const totalProducts = useSelector((state) => state.products.totalCount);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); 
 
   const [categoryId, setCategoryId] = useState('');
   const [brandId, setBrandId] = useState('');
@@ -29,6 +31,9 @@ function ProductList({ globalSearchQuery }) {
   const [pageSize, setPageSize] = useState(12);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const categories = [
     { id: 1, name: 'Electronics' },
@@ -86,6 +91,27 @@ function ProductList({ globalSearchQuery }) {
     setMobileFiltersOpen(!mobileFiltersOpen);
   };
 
+  const handleAddToCart = (product, event) => {
+    event.stopPropagation(); 
+    if (!isAuthenticated) {
+      setSnackbarMessage('Debes iniciar sesión para añadir productos al carrito.');
+      setSnackbarSeverity('warning');
+      setSnackbarOpen(true);
+      return;
+    }
+    dispatch(addItem(product)); 
+    setSnackbarMessage(`${product.name} añadido al carrito localmente.`);
+    setSnackbarSeverity('success');
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   let content;
 
   if (productStatus === 'loading') {
@@ -113,10 +139,10 @@ function ProductList({ globalSearchQuery }) {
                 justifyContent: 'space-between',
                 boxShadow: 3,
                 transition: 'transform 0.2s ease-in-out',
-                cursor: 'pointer', 
+                cursor: 'pointer',
                 '&:hover': {
                   transform: 'translateY(-5px)',
-                  boxShadow: 6, 
+                  boxShadow: 6,
                 },
 
               }}
@@ -181,7 +207,14 @@ function ProductList({ globalSearchQuery }) {
                   </Box>
                 </CardContent>
                 <Box sx={{ p: 1.5 }}>
-                  <Button variant="contained" color="primary" fullWidth size="small">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    size="small"
+                    onClick={(event) => handleAddToCart(product, event)}
+                    disabled={!isAuthenticated} 
+                  >
                     Añadir al Carrito
                   </Button>
                 </Box>
@@ -207,7 +240,7 @@ function ProductList({ globalSearchQuery }) {
         Explora Nuestros Productos
       </Typography>
 
-      <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}> 
+      <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
         <ProductFilters
           categoryId={categoryId} setCategoryId={handleCategoryChange}
           brandId={brandId} setBrandId={handleBrandChange}
@@ -218,24 +251,24 @@ function ProductList({ globalSearchQuery }) {
           brands={brands}
         />
       </Box>
-      <Box sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}> 
+      <Box sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
           <Button
             variant="contained"
             startIcon={<FilterListIcon />}
             onClick={toggleMobileFilters}
-            sx={{ width: '100%', py: 1.5 }} 
+            sx={{ width: '100%', py: 1.5 }}
           >
             Filtros
           </Button>
         </Box>
       </Box>
       <Drawer
-        anchor="right" 
+        anchor="right"
         open={mobileFiltersOpen}
         onClose={toggleMobileFilters}
         sx={{
-          '& .MuiDrawer-paper': { width: '80%', maxWidth: 350, boxSizing: 'border-box', p: 2 }, 
+          '& .MuiDrawer-paper': { width: '80%', maxWidth: 350, boxSizing: 'border-box', p: 2 },
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -249,7 +282,7 @@ function ProductList({ globalSearchQuery }) {
           brandId={brandId} setBrandId={handleBrandChange}
           priceRange={priceRange} setPriceRange={handlePriceRangeChange}
           sortBy={sortBy} setSortBy={handleSortByChange}
-          onClearFilters={() => { handleClearAllFilters(); toggleMobileFilters(); }} 
+          onClearFilters={() => { handleClearAllFilters(); toggleMobileFilters(); }}
           categories={categories}
           brands={brands}
           isMobileView={true}
@@ -259,7 +292,7 @@ function ProductList({ globalSearchQuery }) {
             variant="contained"
             color="primary"
             fullWidth
-            onClick={toggleMobileFilters} 
+            onClick={toggleMobileFilters}
           >
             Aplicar Filtros
           </Button>

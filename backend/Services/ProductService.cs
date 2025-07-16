@@ -54,7 +54,6 @@ namespace FullstackNetReact.Services
 
             productDetailDto.Features = product.Features.Select(f => f.FeatureText).ToList();
 
-            // Calcular promedio de rating y total de reseñas
             productDetailDto.TotalReviews = product.Reviews.Count;
             productDetailDto.AverageRating = product.Reviews.Any() ? Math.Round(product.Reviews.Average(r => r.Rating), 1) : 0;
 

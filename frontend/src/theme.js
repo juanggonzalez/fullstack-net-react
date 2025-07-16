@@ -26,6 +26,9 @@ const theme = createTheme({
       primary: '#333333', // Gris oscuro para texto principal
       secondary: '#666666', // Gris medio para texto secundario
     },
+    gradients: {
+      primaryToSecondary: 'linear-gradient(135deg, #64B5F6 0%, #81C784 100%)', // Usando los colores light
+    },
   },
   typography: {
     fontFamily: 'Roboto, "Helvetica Neue", Arial, sans-serif',

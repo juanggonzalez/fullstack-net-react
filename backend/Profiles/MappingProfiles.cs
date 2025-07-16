@@ -30,6 +30,14 @@ namespace FullstackNetReact.Profiles
                 .ForMember(dest => dest.TotalReviews, opt => opt.MapFrom(src => src.Reviews.Count))
                 .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.Reviews.Any() ? src.Reviews.Average(r => r.Rating) : 0));
 
+            CreateMap<ShoppingCart, ShoppingCartDto>()
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
+
+            CreateMap<ShoppingCartItem, CartItemDto>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.ProductImageUrl, opt => opt.MapFrom(src => src.Product.ImageUrl))
+                .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.PriceAtTimeOfAddition));
 
             // Mapeo de Categoría
             CreateMap<Category, CategoryDto>();

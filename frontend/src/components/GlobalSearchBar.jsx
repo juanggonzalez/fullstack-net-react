@@ -1,9 +1,8 @@
 
-import React from 'react';
 import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
-function GlobalSearchBar({ searchQuery, onSearchChange, inputLabelColor, inputTextColor }) {
+const GlobalSearchBar = ({ searchQuery, onSearchChange, inputLabelColor, inputTextColor }) => {
   return (
     <TextField
       label="Buscar producto"
@@ -14,9 +13,9 @@ function GlobalSearchBar({ searchQuery, onSearchChange, inputLabelColor, inputTe
       sx={{
         backgroundColor: 'rgba(255, 255, 255, 0.15)', 
         borderRadius: 1,
-        width: { xs: '100%', sm: 'auto' }, 
-        minWidth: 200, 
-        maxWidth: 400, 
+        width: { xs: '100%', sm: 'auto' },
+        minWidth: 200,
+        maxWidth: 500, 
         '.MuiOutlinedInput-root': {
           borderRadius: 1,
           '& fieldset': { 

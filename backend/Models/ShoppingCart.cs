@@ -1,17 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FullstackNetReact.Models
 {
     public class ShoppingCart
     {
-        [Key] 
-        public string UserId { get; set; } = string.Empty; 
+        [Key]
+        public int Id { get; set; }
 
-        public ApplicationUser? User { get; set; } 
+        [Required]
+        public string UserId { get; set; } 
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime LastModifiedAt { get; set; } = DateTime.UtcNow;
+        [ForeignKey("UserId")]
+        public ApplicationUser User { get; set; } 
 
         public ICollection<ShoppingCartItem> Items { get; set; } = new List<ShoppingCartItem>();
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }
