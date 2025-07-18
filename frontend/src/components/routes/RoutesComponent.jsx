@@ -2,12 +2,12 @@ import { Routes, Route } from 'react-router-dom';
 import ProductList from '../ProductList';
 import Login from '../auth/Login';
 import Register from '../auth/Register';
-import ProtectedRoute from '../auth/ProtectedRoute';
 import AppHeader from '../AppHeader';
 import NotFound from '../error/NotFound';
 import ShoppingCart from '../ShoppingCart';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeCart } from '../../features/cart/cartSlice'; 
+import ProtectedRoute from './ProtectedRoute';
   
 const RoutesComponent = ({ globalSearchQuery }) => {
   const dispatch = useDispatch();

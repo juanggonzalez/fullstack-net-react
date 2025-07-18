@@ -9,7 +9,7 @@ import {
 import { motion } from 'framer-motion';
 
 import useAuthRedirect from '../../hooks/useAuthRedirect';
-import useLoginForm from '../../hooks/useLoginHook';
+import useLoginForm from '../../hooks/forms/useLoginHook';
 import { useNavigate } from 'react-router-dom'; 
 
 const Login = () => {

@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.IdentityModel.Tokens.Jwt; 
-using System.Security.Claims; 
-using System.Text; 
-using Microsoft.IdentityModel.Tokens; 
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 using FullstackNetReact.Dtos;
 using FullstackNetReact.Models;
+using Microsoft.EntityFrameworkCore; 
+using FullstackNetReact.Data; 
 
 namespace FullstackNetReact.Services
 {
@@ -12,11 +14,13 @@ namespace FullstackNetReact.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context; 
 
-        public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration, ApplicationDbContext context) 
         {
             _userManager = userManager;
             _configuration = configuration;
+            _context = context; 
         }
 
         public async Task<Tuple<bool, IEnumerable<string>>> RegisterUserAsync(RegisterDto registerDto)
@@ -25,7 +29,7 @@ namespace FullstackNetReact.Services
             {
                 UserName = registerDto.Username,
                 Email = registerDto.Email,
-                EmailConfirmed = true, 
+                EmailConfirmed = true,
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName
             };
@@ -40,8 +44,8 @@ namespace FullstackNetReact.Services
             var roleResult = await _userManager.AddToRoleAsync(user, "User");
             if (!roleResult.Succeeded)
             {
-                await _userManager.DeleteAsync(user); 
-                return Tuple.Create(false, new List<string> { "Usuario registrado, pero no se pudo asignar el rol por defecto." } as IEnumerable<string>);
+                await _userManager.DeleteAsync(user);
+                return Tuple.Create(false, roleResult.Errors.Select(e => e.Description));
             }
 
             return Tuple.Create(true, Enumerable.Empty<string>());
@@ -52,14 +56,18 @@ namespace FullstackNetReact.Services
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
-                return null; 
+                return null;
             }
+
+            var userAddresses = await _context.Addresses
+                                                .Where(a => a.UserId == user.Id)
+                                                .ToListAsync();
 
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id) 
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -73,7 +81,7 @@ namespace FullstackNetReact.Services
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                expires: DateTime.Now.AddHours(3), // Token válido por 3 horas
+                expires: DateTime.Now.AddHours(3), 
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -81,18 +89,27 @@ namespace FullstackNetReact.Services
             return new LoginResponseDto
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                User = new UserDto 
+                User = new UserDto
                 {
                     Id = user.Id,
                     Username = user.UserName,
                     Email = user.Email,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    Roles = userRoles.ToList()
+                    Roles = userRoles.ToList(),
+                    Addresses = userAddresses.Select(a => new AddressDto 
+                    {
+                        Id = a.Id,
+                        Street = a.Street,
+                        City = a.City,
+                        State = a.State,
+                        PostalCode = a.PostalCode,
+                        Country = a.Country,
+                        IsDefaultShipping = a.IsDefaultShipping,
+                        IsDefaultBilling = a.IsDefaultBilling
+                    }).ToList()
                 }
             };
         }
     }
-
-    
 }

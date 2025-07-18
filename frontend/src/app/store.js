@@ -4,13 +4,14 @@ import authReducer from '../features/auth/authSlice';
 import cartReducer from '../features/cart/cartSlice';
 import notificationsReducer from '../features/notifications/notificationsSlice'; 
 import notificationMiddleware from './middlewares/notificationMiddleware'; 
-
+import orderReducer from '../features/order/orderSlice'
 export const store = configureStore({
   reducer: {
     products: productsReducer,
     auth: authReducer, 
     cart: cartReducer,
-    notifications: notificationsReducer
+    notifications: notificationsReducer,
+    order: orderReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(notificationMiddleware),

@@ -1,3 +1,4 @@
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 
@@ -43,7 +44,8 @@ export const syncCart = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message || 'Error de red al sincronizar el carrito.');
+      const message = error.response?.data?.message || error.message || 'Error al sincronizar el carrito.';
+      return rejectWithValue(message);
     }
   }
 );
@@ -52,18 +54,18 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState: {
     items: [],
-    status: 'idle',
+    status: 'idle', 
     error: null,
     isOpen: false, 
   },
   reducers: {
     addItem: (state, action) => {
       const product = action.payload;
-
       const existingItem = state.items.find(item => item.productId === product.id);
 
       if (existingItem) {
         existingItem.quantity++;
+        existingItem.quantity += quantity;
       } else {
         state.items.push({
           id: 0,
@@ -76,16 +78,14 @@ const cartSlice = createSlice({
       }
     },
     removeItem: (state, action) => {
-      const cartItemId = action.payload;
-
-      state.items = state.items.filter(item => item.id !== cartItemId);
+      
+      state.items = state.items.filter(item => item.id !== action.payload);
     },
     updateItemQuantity: (state, action) => {
-      const { cartItemId, quantity } = action.payload;
-
+      const { id: cartItemId, quantity: newQuantity } = action.payload;
       const itemToUpdate = state.items.find(item => item.id === cartItemId);
       if (itemToUpdate) {
-        itemToUpdate.quantity = quantity;
+        itemToUpdate.quantity = newQuantity;
         if (itemToUpdate.quantity <= 0) {
           state.items = state.items.filter(item => item.id !== cartItemId);
         }
@@ -102,6 +102,12 @@ const cartSlice = createSlice({
     },
     closeCart: (state) => {
       state.isOpen = false;
+    },
+    
+    orderProcessedSuccessfully: (state, action) => {
+      state.items = []; 
+      
+      
     },
   },
   extraReducers: (builder) => {
@@ -132,14 +138,6 @@ const cartSlice = createSlice({
   },
 });
 
-export const {
-  addItem,
-  removeItem,
-  updateItemQuantity,
-  clearLocalCart,
-  setCart,
-  openCart,  
-  closeCart, 
-} = cartSlice.actions;
+export const { addItem, removeItem, updateItemQuantity, clearLocalCart, setCart, openCart, closeCart, orderProcessedSuccessfully } = cartSlice.actions;
 
 export default cartSlice.reducer;

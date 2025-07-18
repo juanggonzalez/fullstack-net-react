@@ -1,5 +1,3 @@
-// fullstack-net-react/Program.cs
-
 using Microsoft.EntityFrameworkCore;
 using FullstackNetReact.Data;
 using System.Text.Json.Serialization;
@@ -80,6 +78,8 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 
 var app = builder.Build();
 
@@ -181,9 +181,50 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
+     if (adminUser != null)
+    {
+        var existingAddresses = await dbContext.Addresses
+            .Where(a => a.UserId == adminUser.Id)
+            .ToListAsync();
 
+        if (!existingAddresses.Any())
+        {
+            var addresses = new List<Address>
+            {
+                new Address
+                {
+                    UserId = adminUser.Id,
+                    Street = "Calle Falsa 123",
+                    City = "Ciudad Ejemplo",
+                    State = "Estado Ejemplo",
+                    PostalCode = "12345",
+                    Country = "Pa�s Ejemplo",
+                    IsDefaultShipping = true,
+                    IsDefaultBilling = true
+                },
+                new Address
+                {
+                    UserId = adminUser.Id,
+                    Street = "Avenida Siempre Viva 742",
+                    City = "Springfield",
+                    State = "Illinois",
+                    PostalCode = "62704",
+                    Country = "Estados Unidos",
+                    IsDefaultShipping = false,
+                    IsDefaultBilling = false
+                }
+            };
 
-    
+            await dbContext.Addresses.AddRangeAsync(addresses);
+            await dbContext.SaveChangesAsync();
+            logger.LogInformation("Direcciones de ejemplo a�adidas para el usuario 'admin'.");
+        }
+        else
+        {
+            logger.LogInformation("Ya existen direcciones para el usuario 'admin'. No se a�adieron nuevas direcciones.");
+        }
+    }
+
 }
 
 app.MapControllers();

@@ -1,90 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { register } from '../../features/auth/authSlice';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import {
   TextField,
   Button,
   Typography,
   Box,
   Paper,
-  Snackbar,
-  Alert,
-  Slide,
   useTheme,
 } from '@mui/material';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
-function TransitionRight(props) {
-  return <Slide {...props} direction="right" />;
-}
+import useAuthRedirect from '../../hooks/useAuthRedirect';
+import useRegisterHook from '../../hooks/forms/useRegisterHook';
+import { showNotification } from '../../features/notifications/notificationsSlice'; 
 
 const Register = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); 
-  const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const theme = useTheme();
+  const navigate = useNavigate();
+  const dispatch = useDispatch(); 
 
-  const { status, error } = useSelector((state) => state.auth);
+  useAuthRedirect('/'); 
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const {
+    registerForm, 
+    handleSubmit,
+    errors,
+    isSubmitting,
+    reset,
+  } = useRegisterHook();
+
+  const { status, error } = useSelector((state) => state.auth); 
 
   useEffect(() => {
     if (status === 'succeeded' && !error) {
-      setSnackbarMessage('¡Registro exitoso! Ahora puedes iniciar sesión.');
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
+      dispatch(showNotification({
+        message: '¡Registro exitoso! Ahora puedes iniciar sesión. 🎉',
+        severity: 'success',
+        duration: 3000,
+      }));
+      reset();
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } else if (status === 'failed' && error) {
-      setSnackbarMessage(error); 
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
+      dispatch(showNotification({
+        message: error || 'Error en el registro. Inténtalo de nuevo. 😥',
+        severity: 'error',
+        duration: 5000,
+      }));
     }
-  }, [status, error, navigate]);
+  }, [status, error, navigate, dispatch, reset]); 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (
-      username.trim() === '' ||
-      password.trim() === '' ||
-      confirmPassword.trim() === '' || 
-      email.trim() === ''
-
-    ) {
-      setSnackbarMessage('Por favor, completa todos los campos requeridos (usuario, contraseña, email).');
-      setSnackbarSeverity('warning');
-      setSnackbarOpen(true);
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setSnackbarMessage('La contraseña y la confirmación de contraseña no coinciden.');
-      setSnackbarSeverity('warning');
-      setSnackbarOpen(true);
-      return;
-    }
-
-    dispatch(register({ username, password, confirmPassword, email, firstName, lastName }));
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
-  const gradientBackground = `linear-gradient(135deg, ${theme.palette.secondary.light} 0%, ${theme.palette.primary.light} 100%)`;
+  const gradientBackground = theme.palette.gradients.primaryToSecondary; 
 
   return (
     <Box
@@ -129,9 +97,24 @@ const Register = () => {
               name="username"
               autoComplete="username"
               autoFocus
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
               variant="outlined"
+              {...registerForm('username')} 
+              error={!!errors.username}
+              helperText={errors.username?.message}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="email"
+              label="Email"
+              type="email"
+              id="email"
+              autoComplete="email"
+              variant="outlined"
+              {...registerForm('email')} 
+              error={!!errors.email}
+              helperText={errors.email?.message}
             />
             <TextField
               margin="normal"
@@ -142,65 +125,57 @@ const Register = () => {
               type="password"
               id="password"
               autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               variant="outlined"
+              {...registerForm('password')} 
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              name="confirmPassword" 
-              label="Confirmar Contraseña" 
+              name="confirmPassword"
+              label="Confirmar Contraseña"
               type="password"
-              id="confirmPassword" 
-              autoComplete="new-password" 
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              id="confirmPassword"
+              autoComplete="new-password"
               variant="outlined"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              variant="outlined"
+              {...registerForm('confirmPassword')} 
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword?.message}
             />
             <TextField
               margin="normal"
               fullWidth
               id="firstName"
-              label="Nombre"
+              label="Nombre (Opcional)"
               name="firstName"
               autoComplete="given-name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
               variant="outlined"
+              {...registerForm('firstName')} 
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
             />
             <TextField
               margin="normal"
               fullWidth
               id="lastName"
-              label="Apellido"
+              label="Apellido (Opcional)"
               name="lastName"
               autoComplete="family-name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
               variant="outlined"
+              {...registerForm('lastName')} 
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2, py: 1.2, fontSize: '1.1rem' }}
-              disabled={status === 'loading'}
+              disabled={isSubmitting}
             >
-              {status === 'loading' ? 'Registrando...' : 'Registrarse'}
+              {isSubmitting ? 'Registrando...' : 'Registrarse'}
             </Button>
             <Button
               fullWidth

@@ -14,11 +14,12 @@ namespace FullstackNetReact.Profiles
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Name : null))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl));
 
+            // Mapeo Acciones del Producto
             CreateMap<ProductCreateDto, Product>();
             CreateMap<ProductUpdateDto, Product>();
             CreateMap<ProductStockUpdateDto, Product>();
 
-            // Nuevo mapeo para ProductDetailDto
+            // Mapeo Detalle del Producto
             CreateMap<Product, ProductDetailDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : string.Empty))
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Name : null))
@@ -30,9 +31,11 @@ namespace FullstackNetReact.Profiles
                 .ForMember(dest => dest.TotalReviews, opt => opt.MapFrom(src => src.Reviews.Count))
                 .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.Reviews.Any() ? src.Reviews.Average(r => r.Rating) : 0));
 
+            // Mapeo del Cart
             CreateMap<ShoppingCart, ShoppingCartDto>()
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
 
+            // Mapeo de Item de Cart
             CreateMap<ShoppingCartItem, CartItemDto>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
@@ -51,8 +54,24 @@ namespace FullstackNetReact.Profiles
             // Mapeo de Feature
             CreateMap<ProductFeature, ProductFeatureDto>();
 
-            // Mapero de Vendedor
+            // Mapeo de Vendedor
             CreateMap<Seller, SellerDto>();
+
+            // Mapeo de Direccion
+            CreateMap<Address, AddressDto>().ReverseMap(); 
+
+            // Mapeo de Orden
+            CreateMap<Order, OrderDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems))
+                .ForMember(dest => dest.ShippingAddress, opt => opt.MapFrom(src => src.ShippingAddress)) 
+                .ForMember(dest => dest.BillingAddress, opt => opt.MapFrom(src => src.BillingAddress)); 
+
+            // Mapero de Item de la Orden
+            CreateMap<OrderItem, OrderItemDto>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.ProductImageUrl, opt => opt.MapFrom(src => src.Product.ImageUrl))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceAtOrder)); 
         }
     }
 }

@@ -12,4 +12,6 @@ export const registrationSchema = yup.object().shape({
   confirmPassword: yup.string()
     .oneOf([yup.ref('password'), null], 'Las contraseñas no coinciden')
     .required('Confirma tu contraseña'),
+  firstName: yup.string(), 
+  lastName: yup.string(),  
 });

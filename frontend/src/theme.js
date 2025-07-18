@@ -47,7 +47,7 @@ const theme = createTheme({
       lineHeight: 1.5,
     },
     button: {
-      textTransform: 'none', // Botones sin transformación a mayúsculas
+      textTransform: 'none',
       fontWeight: 600,
     },
   },
@@ -74,7 +74,7 @@ const theme = createTheme({
         }
       }
     },
-    MuiPaper: { // Estilos para el Paper que envuelve los filtros
+    MuiPaper: { 
       styleOverrides: {
         root: {
           boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.08)',
